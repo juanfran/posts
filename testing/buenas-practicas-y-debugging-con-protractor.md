@@ -276,7 +276,14 @@ Ahora lanzamos nuestros test de una forma algo distinta.
 node --inspect-brk node_modules/.bin/protractor protractor.conf.js
 ```
 
-Ahora en chome entramos en chrome://inspect/#devices, le damos a Inspect en protractor y listo, nuestro test avanzará hasta encontrarse con el debugger y podemos usar toda la potencía de devtools en nuestros tests.
+Veremos este mensaje de confirmación.
+![init](https://raw.githubusercontent.com/juanfran/posts/master/testing/d1.png)
+
+A continuación abrimos chrome y entramos en `chrome://inspect/#devices` y le damos a Inspect.
+![inspect](https://raw.githubusercontent.com/juanfran/posts/master/testing/d12.png)
+
+Ahora nuestro test avanzará hasta que encuentre el debbuger; y ya podemos usar toda la potencia de devtools en nuestro test.
+![debug](https://raw.githubusercontent.com/juanfran/posts/master/testing/d2.png)
 
 ## Pause (node 7)
 
