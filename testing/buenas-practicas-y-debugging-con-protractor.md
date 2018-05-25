@@ -242,6 +242,10 @@ exports.config = {
 
 Para hacerlo funcionar tenemos que desabilitar antes el `directConnect` y activar `useBlockingProxy`, entonces podremos poner en `highlightDelay` cuanto queremos que esté el elemento seleccionado antes de hacer click.
 
+![hightlight](https://raw.githubusercontent.com/juanfran/posts/master/testing/h1.gif)
+
+Como vemos en el gif antes de hacer click en el element vemos el foco.
+
 ## Logs
 
 También podemos almanzenar logs de todo lo que hace protractor.
@@ -282,4 +286,4 @@ Si usamos node 7 (en node 8 en adelante por ahora no se puede), podemos poner en
 
 El explore es parecido al pause salvo que en terminal podemos escribir comandos de protractor, muy útil si por ejemplo tenemos una query que no funciona y no sabemos por qué, pues podemos parar el navegador en ese punto e ir ejecutando queries u otros comandos de protactor para averiguar qué está pasando.
 
-## Debugger
+## Debugger (node 7)
