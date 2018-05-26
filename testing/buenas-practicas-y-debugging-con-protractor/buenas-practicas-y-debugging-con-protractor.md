@@ -306,4 +306,4 @@ El `browser.explore()` nos pausa el navegador en el punto elegido y al igual que
 
 ## Debugger
 
-
+`browser.debbuger()` es similar a `debugger;` la diferencia es que con uno interactuamos con el terminal y con el otro con devtools. También se comportan algo distinto `browser.debbuger()` pausa el navegador despues 
