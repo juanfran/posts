@@ -300,6 +300,10 @@ Ahora podemos continuar el test con normalidad con `Ctrl+c` o que avance una tar
 
 ## Explore
 
-El explore es parecido al pause salvo que en terminal podemos escribir comandos de protractor, muy útil si por ejemplo tenemos una query que no funciona y no sabemos por qué, pues podemos parar el navegador en ese punto e ir ejecutando queries u otros comandos de protactor para averiguar qué está pasando.
+El `browser.explore()` nos pausa el navegador en el punto elegido y al igual que aqui en pause el terminal nos pedirá instrucciones, salvo que aquí en vez de continuar a la siguiente tarea podemos interactuar con protractor al igual que hariamos en nuestro test.
+
+![explore1](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/explore1.png)
 
 ## Debugger
+
+
