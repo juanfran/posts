@@ -285,12 +285,21 @@ A continuación abrimos chrome y entramos en `chrome://inspect/#devices` y le da
 Ahora nuestro test avanzará hasta que encuentre el debbuger; y ya podemos usar toda la potencia de devtools en nuestro test.
 ![debug](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/d2.png)
 
-## Pause (node 7)
+## Node 8+
+Los siguientes métodos de debug no pueden se usados por Node 8+
 
-Si usamos node 7 (en node 8 en adelante por ahora no se puede), podemos poner en nuestro test `browser.pause()` para que el navegador se pare en ese punto. Si escribemos 'c' en el terminal el test continuará.
+## Pause
 
-## Explore (node 7)
+Podemos poner en nuestro test `browser.pause()` para que el navegador se pare en ese punto. Al ejecutar nuestro test e2e protactor se parará en la linea donde pongamos el pause y el terminal nos pedirá instrucciones.
+
+![pause1](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/pause1.png)
+
+Ahora podemos continuar el test con normalidad con `Ctrl+c` o que avance una tarea escribiendo `c`.
+
+![pause2](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/pause2.png)
+
+## Explore
 
 El explore es parecido al pause salvo que en terminal podemos escribir comandos de protractor, muy útil si por ejemplo tenemos una query que no funciona y no sabemos por qué, pues podemos parar el navegador en ese punto e ir ejecutando queries u otros comandos de protactor para averiguar qué está pasando.
 
-## Debugger (node 7)
+## Debugger
