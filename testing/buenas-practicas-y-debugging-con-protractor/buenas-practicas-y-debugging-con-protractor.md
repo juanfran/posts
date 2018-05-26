@@ -242,7 +242,7 @@ exports.config = {
 
 Para hacerlo funcionar tenemos que desabilitar antes el `directConnect` y activar `useBlockingProxy`, entonces podremos poner en `highlightDelay` cuanto queremos que esté el elemento seleccionado antes de hacer click.
 
-![hightlight](https://raw.githubusercontent.com/juanfran/posts/master/testing/h1.gif)
+![hightlight](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/h1.gif)
 
 Como vemos en el gif antes de hacer click en el element vemos el foco.
 
@@ -263,7 +263,7 @@ exports.config = {
 };
 ```
 
-![logs](https://raw.githubusercontent.com/juanfran/posts/master/testing/s2.jpg)
+![logs](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/s2.jpg)
 
 En la imagén podemos ver qué elementos ha buscado y donde ha hecho click, muy util si queremos averiguar dónde esta fallando nuestro test.
 
@@ -277,13 +277,13 @@ node --inspect-brk node_modules/.bin/protractor protractor.conf.js
 ```
 
 Veremos este mensaje de confirmación.
-![init](https://raw.githubusercontent.com/juanfran/posts/master/testing/d1.png)
+![init](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/d1.png)
 
 A continuación abrimos chrome y entramos en `chrome://inspect/#devices` y le damos a Inspect.
-![inspect](https://raw.githubusercontent.com/juanfran/posts/master/testing/d12.png)
+![inspect](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/d12.png)
 
 Ahora nuestro test avanzará hasta que encuentre el debbuger; y ya podemos usar toda la potencia de devtools en nuestro test.
-![debug](https://raw.githubusercontent.com/juanfran/posts/master/testing/d2.png)
+![debug](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/d2.png)
 
 ## Pause (node 7)
 
