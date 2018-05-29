@@ -1,14 +1,16 @@
-# Buenas practicas y debugging con protractor
+# Buenas prácticas y debugging con Protractor
+
+Vamos a repasar una serie de consejos y funcionalidades para hacer nuestros tests de e2e con Protractor más fáciles de mantener y debuggear.
 
 ## Queries específicas de e2e
 
-No usar las mismas clases para tus estilos y tu js que para tus test e2e. Es muy fácil que cuando estamos modificando el html borremos alguna clase que sea clave para que nuestros test e2e se ejecuten. Una forma de prevenirlo es añadir clases que solo se usen en los test e2e con un prefijo especifico.
+No es bueno usar las mismas clases para tus estilos y tu js que para tus test e2e. Es muy fácil que cuando estamos modificando el html borremos alguna clase que sea clave para que nuestros test e2e se ejecuten. Una forma de prevenirlo es añadir clases que solo se usen en los test e2e con un prefijo específico.
 
 ```html
-    <button class="btn-submit e2e-submit" (click)="onSubmit()">Enviar</button>
+<button class="btn-submit e2e-submit" (click)="onSubmit()">Enviar</button>
 ```
 
-Estas clases podemos borrarlas al generar el código de producción por ejemplo con webpack podemos hacerlo con `string-replace-loader`.
+Estas clases podemos borrarlas al generar el código de producción, por ejemplo con webpack podemos hacerlo con `string-replace-loader`.
 
 ```js
 module.exports = {
@@ -32,25 +34,32 @@ module.exports = {
 };
 ```
 
-## Usar asyn await
+## Usar asyn/await
 
-A veces en nuestros test queremos esperar a tener un resultado específico antes de continuar podemos usar promesa con then pero muy facilmente nuestros test se van a volver dificiles de leer. 
+A veces en nuestros test queremos esperar a tener un resultado específico, antes de continuar podemos esperar a que se resuelva la promesa con `.then`, pero nuestros test van a ser difíciles de entender o leer. 
 
 ```js
-browser.getCurrentUrl().then(function(url) {
-  expect(url).toEqual('www.kaleidos.net');
-  done();
+browser.getCurrentUrl().then((url) => {
+  element(by.css('.e2e-posts')).count().then((postsCount) => {
+    expect(postsCount).toEqual(10);
+    expect(url).toEqual('www.kaleidos.net');
+    done();
+  });
 });
 
 ```
 
+Con asyn/await es mucho más legible.
+
 ```js
 const url = await browser.getCurrentUrl();
+const postsCount = await element(by.css('.e2e-posts')).count();
 
+expect(postsCount).toEqual(10);
 expect(url).toEqual('www.kaleidos.net');
 ```
 
-Si empezamos a usar async await podemos desativar Selenium promise manager en nuestro protractor.conf.
+Si empezamos a usar async/await podemos desactivar Selenium promise manager en nuestro protractor.conf.js
 
 ```js
 exports.config = {
@@ -58,16 +67,16 @@ exports.config = {
 };
 ```
 
-## Añadir mensajes de error a los browser.wait
+## Añadir mensajes de error en browser.wait
 
-Si tenemos muchos `browser.wait` puede llegar a ser dificil identificar cual falla pero si le indicamos en su tercer parámetro un string si ese wait expira sin cumplir la condición nos dará el mensaje que le hemos dado.
+Si tenemos muchos `browser.wait` puede llegar a ser difícil identificar cuál falla pero si le indicamos en su tercer parámetro un mensaje si ese wait expira sin cumplir la condición nos dará el mensaje anterior.
 
 ```js
 browser.wait(() => {
   return false;
 });
 
-// x segundos despues
+// x segundos después
 // Error: Timeout - Async callback was not invoked within timeout specified by jasmine.DEFAULT_TIMEOUT_INTERVAL.
 ```
 
@@ -86,7 +95,7 @@ Con protractor y selenium tenemos una serie de condiciones muy útiles por las q
 
 ```js
 // Esperando que el botón sea clickable
-const browser.get(URL);
+browser.get(URL);
 const button = element(by.css('.e2e-button'))
 const isClickable = EC.elementToBeClickable(button);	
 
@@ -104,7 +113,7 @@ button.click();
 const isVisible = EC.visibilityOf(list);						
 await browser.wait(isVisible, 5000, 'the list is not visible');
 
-// aquí ya podemos interactura con e2e-list-items porque es visible
+// aquí ya podemos interacturar con e2e-list-items porque es visible
 ```
 
 ```js
@@ -136,7 +145,7 @@ await browser.wait(EC.textToBePresentInElement(button, 'delete'), 5000);
 
 ## Component Objects
 
-Lo mejor que podemos hacer por la legibilidad de nuestros test es crear objectos que manejen partes especificas de la página. Estos objetos podría manejar un componente muy concreto o una página entera. Veamos primero un ejemplo escrito sin objectos.
+Lo mejor que podemos hacer por la legibilidad de nuestros test es crear objetos que manejen partes específicas de la página. Estos objetos podrian manejar un componente muy concreto o una página entera. Veamos primero un ejemplo escrito sin objetos.
 
 ```js
 describe('Posts', () => {
@@ -150,7 +159,7 @@ describe('Posts', () => {
     // enviamos el formulario
     element(by.css('.e2e-form-submit')).click();
 
-    // esperamos que nos salga el mensaje de exito
+    // esperamos que nos salga el mensaje de éxito
     browser.wait(() => {
       return element(by.css('.e2e-success')).isPresent();
     });
@@ -222,11 +231,11 @@ export class PostForm {
 }	
 ```
 
-Ahora tenemos toda la funcionalidad en pequeñas funciones que indican claramente a qué se dedican y además hemos añadido algo que no teneiamos antes, en el contructor de cada objeto nos aseguramos que el componente con el que queremos interactuar está listo.
+Ahora tenemos toda la funcionalidad en pequeñas funciones que indican claramente a qué se dedican y además hemos añadido algo que no teníamos antes, en el constructor de cada objeto nos aseguramos que el componente con el que queremos interactuar está listo.
 
 ## Hightlight clicks
 
-Empezamos con el debugging, a veces si estamos debuggeando un test e2e queremos saber al detalle qué está pasando por ejemplo queremos ir viendo donde está protractor haciendo click, para ello siemplemente tenemos que activarlo en nuestro protractor.conf y ahora nos relatará el elemento justo antes de hacer click en él.
+Empezamos con el debugging, a veces si estamos debuggeando un test e2e queremos saber al detalle qué está pasando, por ejemplo queremos ir viendo donde está protractor haciendo click, para ello simplemente tenemos que activarlo en nuestro protractor.conf y ahora nos resaltará el elemento justo antes de hacer click en él.
 
 ```js
 exports.config = {
@@ -240,7 +249,7 @@ exports.config = {
 };
 ```
 
-Para hacerlo funcionar tenemos que desabilitar antes el `directConnect` y activar `useBlockingProxy`, entonces podremos poner en `highlightDelay` cuanto queremos que esté el elemento seleccionado antes de hacer click.
+Para hacerlo funcionar tenemos que deshabilitar antes el `directConnect` y activar `useBlockingProxy`, entonces podremos poner en `highlightDelay` cuanto queremos que esté el elemento seleccionado antes de hacer click.
 
 ![hightlight](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/h1.gif)
 
@@ -248,7 +257,7 @@ Como vemos en el gif antes de hacer click en el element vemos el foco.
 
 ## Logs
 
-También podemos almanzenar logs de todo lo que hace protractor.
+También podemos almacenar logs de todo lo que hace protractor.
 
 ```js
 exports.config = {
@@ -265,7 +274,7 @@ exports.config = {
 
 ![logs](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/s2.jpg)
 
-En la imagén podemos ver qué elementos ha buscado y donde ha hecho click, muy util si queremos averiguar dónde esta fallando nuestro test.
+En la imagen podemos ver qué elementos ha buscado y donde ha hecho click, muy util si queremos averiguar dónde está fallando nuestro test.
 
 ## Debugging con chrome
 
@@ -282,15 +291,15 @@ Veremos este mensaje de confirmación.
 A continuación abrimos chrome y entramos en `chrome://inspect/#devices` y le damos a Inspect.
 ![inspect](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/d12.png)
 
-Ahora nuestro test avanzará hasta que encuentre el debugger; y ya podemos usar toda la potencia de devtools en nuestro test.
+Ahora nuestro test avanzará hasta que encuentre el `debugger;` y ya podemos usar toda la potencia de devtools en nuestro test.
 ![debug](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/d2.png)
 
 ## Node 8+
-Los siguientes métodos de debug no pueden se usados por Node 8+
+Los siguientes métodos de debug no pueden ser usados por Node 8+
 
 ## Pause
 
-Podemos poner en nuestro test `browser.pause()` para que el navegador se pare en ese punto. Al ejecutar nuestro test e2e protactor se parará en la linea donde pongamos el pause y el terminal nos pedirá instrucciones.
+Podemos poner en nuestro test `browser.pause()` para que el navegador se pare en ese punto. Al ejecutar nuestro test e2e protractor se parará en la línea donde pongamos el pause y el terminal nos pedirá instrucciones.
 
 ![pause1](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/pause1.png)
 
@@ -300,14 +309,14 @@ Ahora podemos continuar el test con normalidad con `Ctrl+c` o que avance una tar
 
 ## Explore
 
-El `browser.explore()` nos pausa el navegador en el punto elegido y al igual que aqui en pause el terminal nos pedirá instrucciones, salvo que aquí en vez de continuar a la siguiente tarea podemos interactuar con protractor al igual que hariamos en nuestro test.
+El `browser.explore()` nos pausa el navegador en el punto elegido y al igual que antes en pause el terminal nos pedirá instrucciones, salvo que aquí en vez de continuar a la siguiente tarea podemos interactuar con protractor al igual que haríamos en nuestro test.
 
 ![explore1](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/explore1.png)
 
 ## Debugger
 
-`browser.debugger()` es similar a `debugger;` la diferencia es que con uno interactuamos con el terminal y con el otro con devtools. También se comportan algo distinto `browser.debugger()` pausa el navegador despues de que la acción anterior haya sido completada en cambio `debugger` lo pausa cuando la acción ha sido programada.
+`browser.debugger()` es similar a `debugger;` la diferencia es que con uno interactuamos con el terminal y con el otro con devtools. También se comportan algo distinto `browser.debugger()` pausa el navegador después de que la acción anterior haya sido completada en cambio `debugger` lo pausa cuando la acción ha sido programada.
 
 Para lanzarlos ejecutamos el siguiente comando `protractor debug protractor.conf.js`. Ahora en el terminal podemos escribir `c` para que avance hasta el siguiente breakpoint o `n` para ir al siguiente comando.
 
-En el navegador ademas disponemos de algunas quereis especiales de protractor en `window.clientSideScripts`.
+En el navegador además disponemos de algunas quereis especiales de protractor en `window.clientSideScripts`.
