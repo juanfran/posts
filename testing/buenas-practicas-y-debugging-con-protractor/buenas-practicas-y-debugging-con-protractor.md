@@ -282,7 +282,7 @@ Veremos este mensaje de confirmación.
 A continuación abrimos chrome y entramos en `chrome://inspect/#devices` y le damos a Inspect.
 ![inspect](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/d12.png)
 
-Ahora nuestro test avanzará hasta que encuentre el debbuger; y ya podemos usar toda la potencia de devtools en nuestro test.
+Ahora nuestro test avanzará hasta que encuentre el debugger; y ya podemos usar toda la potencia de devtools en nuestro test.
 ![debug](https://raw.githubusercontent.com/juanfran/posts/master/testing/buenas-practicas-y-debugging-con-protractor/d2.png)
 
 ## Node 8+
@@ -306,4 +306,8 @@ El `browser.explore()` nos pausa el navegador en el punto elegido y al igual que
 
 ## Debugger
 
-`browser.debbuger()` es similar a `debugger;` la diferencia es que con uno interactuamos con el terminal y con el otro con devtools. También se comportan algo distinto `browser.debbuger()` pausa el navegador despues 
+`browser.debugger()` es similar a `debugger;` la diferencia es que con uno interactuamos con el terminal y con el otro con devtools. También se comportan algo distinto `browser.debugger()` pausa el navegador despues de que la acción anterior haya sido completada en cambio `debugger` lo pausa cuando la acción ha sido programada.
+
+Para lanzarlos ejecutamos el siguiente comando `protractor debug protractor.conf.js`. Ahora en el terminal podemos escribir `c` para que avance hasta el siguiente breakpoint o `n` para ir al siguiente comando.
+
+En el navegador ademas disponemos de algunas quereis especiales de protractor en `window.clientSideScripts`.
