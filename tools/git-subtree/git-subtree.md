@@ -1,0 +1,2 @@
+git subtree add --prefix=vendor/ subtree-child master (--squash hace un squash de los commits del subrepo)
+git subtree pull --prefix=vendor/ subtree-child master (--squash hace un squash de los commits del subrepo)
