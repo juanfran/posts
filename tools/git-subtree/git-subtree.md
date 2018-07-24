@@ -1,6 +1,6 @@
 # Tutorial git subtree
 
-En este tutorial vamos a ver como usar `git subtree`. Los subtrees nos permiten usar el código de un repositorio hijo en un repositorio padre. Es una alternativa a los submódulos con un flujo de trabajo distinto. Veamoslo con ejemplos.
+En este tutorial vamos a ver cómo usar `git subtree`. Los subtrees nos permiten usar el código de un repositorio hijo en un repositorio padre. Es una alternativa a los submódulos con un flujo de trabajo distinto. Veamoslo con ejemplos.
 
 Este es el estado inicial de nuestro repositorio padre.
 
@@ -32,14 +32,14 @@ Y hacemos push de la rama split en master del repositorio hijo.
 git push subtree-child split:master
 ```
 
-Como tenemos el contenido de vendor en el repositorio hijo ya podemos eliminarlo de master.
+Listo, ya tenemos vendor en un nuevo repositio y ahora podemos eliminarlo de master de nuestro repositorio padre.
 
 ```shell
 git rm -r vendor
 git commit -m "removing vendor folder"
 ```
 
-Ahora queremos que nuestro repositorio padre tenga el código del respositorio hijo.
+Ahora queremos que nuestro repositorio padre vuelva a tener el código de vendor pero esta vez usando el respositorio hijo.
 
 Primero creamos el subtree.
 
@@ -52,7 +52,7 @@ Ahora nuestro repositorio padre está así.
 
 ![master-squash](https://raw.githubusercontent.com/juanfran/posts/master/tools/git-subtree/assets/master-squash.png)
 
-Como podeis ver volvemos a tener la carpeta vendor con `lib.js` dentro. Esta carpeta no es ninguna referencia ni nada parecido a nuestro repositorio hijo. Es una copia de la rama master.
+Como podeis ver volvemos a tener la carpeta vendor con `lib.js` dentro. Esta carpeta no es ninguna referencia ni nada parecido a nuestro repositorio hijo. Es una copia de la rama master del repositorio subtree-child.
 
 Ahora veamos el log.
 
@@ -72,7 +72,7 @@ Si ahora comprobamos el histórico del repositorio hijo veremos el commit que he
 
 ![child-after-push](https://raw.githubusercontent.com/juanfran/posts/master/tools/git-subtree/assets/child-after-push.png)
 
-git subtree irá commit por commit solo cogiendo los cambios que afecten al subtree por tanto podemos meter tranquilamente en un solo commit cambios que afecten tanto al subtree como al repositorio padre.
+git subtree irá commit por commit solo cogiendo los cambios que afecten al subtree, por tanto podemos meter tranquilamente en un solo commit cambios que afecten tanto al subtree como al repositorio padre y git se encargará de filtrar.
 
 Ahora vamos a traernos cambios del repositorio hijo al padre. Vamos al hijo y volvemos hacer un cambio en `lib.js`, commit y push. Igual que en el caso anterior si nos vamos al padre no veremos los cambios del repositorio hijo, para actualizar tendremos que hacer pull del subtree.
 
@@ -84,4 +84,4 @@ Exactamente igual que con el `git add subtree` veremos el squash (si lo hemos in
 
 ### Conclusiones
 
-Con algunos flujos de trabajo los subtrees pueden tener ventajas sobre los submodulos, como tenemos una copia del código en el repositorio padre no require que cambiemos nuestro flujo de trabajo trataremos al código del subtree como cualquier igual que al resto. Por otro lado tenemos que recordar hacer pull/push del repositorio hijo y tener cuidado con los rebases, si hacemos pull del hijo en una rama y luego rebasamos master acabaremos con el historio bastante liado, para ello mejor hacer hacer pull directamente en master y luego rebasarlo a nuestra rama.
+Con algunos flujos de trabajo los subtrees pueden tener ventajas sobre los submodulos, como tenemos una copia del código en el repositorio padre no require que cambiemos nuestro flujo de trabajo, trataremos al código del subtree igual que al resto de ficheros de nuestro proyecto. Por otro lado tenemos que recordar hacer pull/push del repositorio hijo y tener cuidado con los rebases, si hacemos pull del hijo en una rama y luego rebasamos master acabaremos con el historico bastante liado, para ello mejor hacer pull directamente en master y luego rebasarlo a nuestra rama.
