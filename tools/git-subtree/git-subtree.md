@@ -60,7 +60,28 @@ Ahora veamos el log.
 
 Añadir el subtree nos ha creado 2 commits, uno con el merge y otro con el siguiente mensaje `Squashed 'vendor/' content from commit` cuando hemos añadido el repositorio lo hemos hecho con el flag `squash` con esto hemos dicho que se traiga el contido del repositorio hijo pero que no conserve el historico del hijo en el padre osea que nos lo deje en un solo commit.
 
+Bien ya tenemos nuestro repositorio con un subtree listo, ahora veamos cómo podemos trabajar con él.
 
+Primero vamos a modificar un archivo en el repositorio padre. Modificamos `vendor/lib.js`, commit y push. Si ahora vamos al repositorio hijo no veremos el cambio. ¿Cómo lo actualizo con los últimos cambios del repositorio padre?
 
+```shell
+git subtree push --prefix=vendor/ subtree-child master
+```
 
-git subtree pull --prefix=vendor/ subtree-child master (--squash hace un squash de los commits del subrepo)
+Si ahora comprobamos el histórico del repositorio hijo veremos el commit que hemos hecho en el padre.
+
+![child-after-push](https://raw.githubusercontent.com/juanfran/posts/master/tools/git-subtree/assets/child-after-push.png)
+
+git subtree irá commit por commit solo cogiendo los cambios que afecten al subtree por tanto podemos meter tranquilamente en un solo commit cambios que afecten tanto al subtree como al repositorio padre.
+
+Ahora vamos a traernos cambios del repositorio hijo al padre. Vamos al hijo y volvemos hacer un cambio en `lib.js`, commit y push. Igual que en el caso anterior si nos vamos al padre no veremos los cambios del repositorio hijo, para actualizar tendremos que hacer pull del subtree.
+
+```shell
+git subtree pull --prefix=vendor/ subtree-child master --squash
+```
+
+Exactamente igual que con el `git add subtree` veremos el squash (si lo hemos indicado con el flag) y el merge del repositorio hijo.
+
+### Conclusiones
+
+Con algunos flujos de trabajo los subtrees pueden tener ventajas sobre los submodulos, como tenemos una copia del código en el repositorio padre no require que cambiemos nuestro flujo de trabajo trataremos al código del subtree como cualquier igual que al resto. Por otro lado tenemos que recordar hacer pull/push del repositorio hijo y tener cuidado con los rebases, si hacemos pull del hijo en una rama y luego rebasamos master acabaremos con el historio bastante liado, para ello mejor hacer hacer pull directamente en master y luego rebasarlo a nuestra rama.
