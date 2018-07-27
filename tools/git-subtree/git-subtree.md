@@ -1,6 +1,6 @@
 # Tutorial git subtree
 
-En este tutorial vamos a ver cómo usar `git subtree`. Los subtrees nos permiten usar el código de un repositorio hijo en un repositorio padre. Es una alternativa a los submódulos con un flujo de trabajo distinto. Veamoslo con ejemplos.
+En este tutorial vamos a ver cómo usar `git subtree`. Los subtrees nos permiten usar el código de un repositorio hijo en un repositorio padre. Es una alternativa a los submódulos con un flujo de trabajo distinto. Veámoslo con ejemplos.
 
 Este es el estado inicial de nuestro repositorio padre.
 
