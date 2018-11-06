@@ -29,7 +29,7 @@ second subscribe: 2
 // etc
 ```
 
-En este ejemplo `interval` es cold por tanto reemite el strem por cada suscripción. Ambas suscripciones reciben los mismos valores pero en momentos distintos por tanto `interval` está volviendo a empezar y no está compartiendo datos.
+En este ejemplo `interval` es cold por tanto ambas suscripciones reciben los mismos valores pero en momentos distintos por tanto `interval` está volviendo a empezar y no está compartiendo datos con las distintas suscripciones.
 
 Veamos otro ejemplo más peligroso.
 
@@ -43,7 +43,7 @@ source.subscribe(console.log);
 source.subscribe(console.log);
 ```
 
-En este ejemplo queremos que cada vez que se haga click en un botón realize una petición a una url que nos devuelve unos datos que luego vamos a consultar en dos puntos distintos de nuestro código, en este caso por simplificar ponemos dos subscribe juntos. ¿Qué va a pasar cuando el usuario haga click en el botón? pues que nos vamos a encontrar con la petición al servidor repetida y seguramente no queremos eso. Como en el ejemplo anterior cada subscribe produce un nuevo stream de datos.
+En este ejemplo queremos que cada vez que se haga click en un botón realize una petición a una url que nos devuelva unos datos y que queremos consultar en dos puntos distintos de nuestro código. En este caso por simplificar ponemos dos subscribe juntos. ¿Qué va a pasar cuando el usuario haga click en el botón? pues parece que funciona correctamente, el usuario hace click y nuestras dos subscripciones reciben datos pero si miramos las conexiones veremos que la petición al servidor está repetida y seguramente no queremos eso. Como en el ejemplo anterior cada subscribe produce un nuevo stream de datos.
 
 ### Convertir un observable cold en hot
 
