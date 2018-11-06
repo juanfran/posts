@@ -16,7 +16,7 @@ setTimeout(() => {
 }, 3000);
 ```
 
-En este primer ejemplo tenemos una constante `runInterval` que lo único que tiene es un intervalo observable de 2 segundos. Inmediatamente despues de crearlo nos suscribimos por primera vez y despues de 3 segundos nos suscribimos por segunda vez. En ambas suscripciones hacemos un `console.log` del número de repetición del intervalo. Veamos el resultado.
+En este primer ejemplo, tenemos una constante `runInterval` que lo único que tiene es un intervalo observable de 2 segundos. Inmediatamente después de crearlo nos suscribimos por primera vez y después de 3 segundos nos suscribimos por segunda vez. En ambas suscripciones hacemos un `console.log` del número de repetición del intervalo. Veamos el resultado.
 
 ```shell
 first subscribe: 0
@@ -29,9 +29,9 @@ second subscribe: 2
 // etc
 ```
 
-En este ejemplo `interval` es cold por tanto ambas suscripciones reciben los mismos valores pero en momentos distintos por tanto `interval` está volviendo a empezar y no está compartiendo datos con las distintas suscripciones.
+En este ejemplo `interval` es cold porque ambas suscripciones reciben los mismos valores, pero en momentos distintos, por tanto `interval` está volviendo a empezar y no está compartiendo datos con las distintas suscripciones.
 
-Veamos otro ejemplo más peligroso.
+Veamos otro ejemplo.
 
 ```js
 const source = fromEvent(someButton, 'click')
@@ -43,7 +43,7 @@ source.subscribe(console.log);
 source.subscribe(console.log);
 ```
 
-En este ejemplo queremos que cada vez que se haga click en un botón realize una petición a una url que nos devuelva unos datos y que queremos consultar en dos puntos distintos de nuestro código. En este caso por simplificar ponemos dos subscribe juntos. ¿Qué va a pasar cuando el usuario haga click en el botón? pues parece que funciona correctamente, el usuario hace click y nuestras dos subscripciones reciben datos pero si miramos las conexiones veremos que la petición al servidor está repetida y seguramente no queremos eso. Como en el ejemplo anterior cada subscribe produce un nuevo stream de datos.
+En este ejemplo queremos que cada vez que se haga click en un botón realize una petición a una url para que nos devuelva unos datos que van a ser consultados en dos puntos distintos de nuestro código. En este caso por simplificar, ponemos dos subscribe juntos. ¿Qué va a pasar cuando el usuario haga click en el botón? va a parecer que funciona correctamente. El usuario hace click y nuestras dos subscripciones reciben datos, pero si miramos las conexiones veremos que la petición al servidor está repetida y seguramente no queremos eso. Como en el ejemplo anterior cada subscribe produce un nuevo stream de datos.
 
 ### Convertir un observable cold en hot
 
@@ -95,11 +95,11 @@ Ahora vemos cómo ambas suscripciones reciben lo mismo, excepto '0' que sólo lo
 
 ### Hot vs Cold
 
-Al final podemos resumir la diferencía entre hot y cold en que los observables cold sus datos son producidos por el observable en si mismo en cambio los hot los datos son producidos fuera del observable. Esto tiene como consecuencia que un observable hot podría haber emitido valores antes de la suscripción.
+Al final podemos resumir la diferencía entre hot y cold en que los datos del observables cold son producidos por el observable en si mismo en cambio los datos producidos en los hot se pueden generar fuera del observable. Esto tiene como consecuencia que un observable hot podría haber emitido valores antes de la suscripción.
 
 
 ```js
 const source = fromEvent(document, 'click')
 ```
 
-Por ejemplo `fromEvent` nos devuelve un observable hot porque los datos del evento click son creados tanto si estamos suscritos como si no, en cambio un cold por cada suscripción empezará un nuevo stream emitiendo diferentes valores como hemos visto por ejemplo con el `interval`.
+Por ejemplo `fromEvent` nos devuelve un observable hot porque los datos del evento click son creados tanto si estamos suscritos como si no, en cambio un cold por cada suscripción empezará un nuevo stream emitiendo diferentes valores como hemos visto en ejemplo con el `interval`.
