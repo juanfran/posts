@@ -1,3 +1,14 @@
+# Tutorial monorepos con Lerna
+
+En este tutorial vamos a ver cómo gestionar un monorepo con varios paquetes npm gracias a [Lerna](https://github.com/lerna/lerna). 
+
+Lerna es una herramienta que mejora el flujo de trabajo con multiples paquetes de npm en un sólo repositorio. Tener un monorepo nos facilita  coordinar cambios entre múltiples paquetes y la configuración de entornos.
+
+¿Esto lo usa alguien?
+
+Pues tenemos muchos proyectos importantes usando monorepos con Lerna entre ellos [React](https://github.com/facebook/react/tree/master/packages) o [Babel](https://github.com/babel/babel/blob/master/doc/design/monorepo.md)
+
+Vamos ahora a montar un pequeño proyecto para que lo veamos en funcionamiento.
 
 ├── lerna.json
 ├── package.json
