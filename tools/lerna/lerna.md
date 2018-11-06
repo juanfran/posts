@@ -10,6 +10,23 @@ Pues tenemos muchos proyectos importantes usando monorepos con Lerna entre ellos
 
 Vamos ahora a montar un pequeño proyecto para que lo veamos en funcionamiento.
 
+Instalamos Lerna en global.
+```shell
+npm i -g lerna
+```
+
+Creamos nuestro repo de pruebas.
+```shell
+mkdir lerna-example
+cd lerna-example
+git init
+```
+
+Y ahora lo convertimos en un reposotorio compatible con Lerna.
+```shell
+lerna init
+```
+
 ├── lerna.json
 ├── package.json
 └── packages
@@ -99,3 +116,5 @@ Changes:
 how? 
 https://github.com/facebook/react/tree/master/packages
 https://github.com/babel/babel/blob/master/doc/design/monorepo.md
+
+
