@@ -146,9 +146,29 @@ Ahora publicamos, para ello ejcutamos `lerna version`.
 
 ![lerna-version](https://raw.githubusercontent.com/juanfran/posts/master/tools/lerna/assets/lerna-version.png)
 
-Lo primero que hace es decirnos que tipo de versión queremos lanzar (minor, major etc), en nuestro caso elegimos major la 1.0.0 pero como es el valor por defecto del `npm init` los `package.json` no son modificados. A continuación lerna nos crear el tag 1.0.0 y hace push en nuetro repo.
+Lo primero que hace es decirnos que tipo de versión queremos lanzar (patch, minor, major etc), en nuestro caso elegimos major la 1.0.0 pero como es el valor por defecto del `npm init` los `package.json` no son modificados. A continuación lerna nos crear el tag 1.0.0 y hace push en nuetro repo.
 
 Existe una alternativa a `lerna version` que es `lerna publish` que ademas de actualizar nuestro repo actualizará las biblotecas en npm.
+
+Bien ahora vamos hacer cambios en nuestras dependencias para ver cómo lo maneja Lerna.
+
+Vamos a actualizar la test1 con el siguiente contenido.
+
+```js
+// packages/test1/index.js
+
+module.exports = 'Test1 v2';
+```
+
+Hacemos commit, push y volvemos a ejecutar `lerna changed`.
+
+![lerna-changed2](https://raw.githubusercontent.com/juanfran/posts/master/tools/lerna/assets/lerna-changed2.png)
+
+Ahora vemos que Lerna nos informa que tenemos cambios en test1 y test3, de test2 no porque no depende de test1 pero test3 sí.
+
+Publicamos la nueva versión con `lerna version`, esta vez como una minor.
+
+![lerna-version2](https://raw.githubusercontent.com/juanfran/posts/master/tools/lerna/assets/lerna-version2.png)
 
 `lerna add babel-core`
 
