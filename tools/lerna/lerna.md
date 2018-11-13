@@ -164,45 +164,18 @@ Hacemos commit, push y volvemos a ejecutar `lerna changed`.
 
 ![lerna-changed2](https://raw.githubusercontent.com/juanfran/posts/master/tools/lerna/assets/lerna-changed2.png)
 
-Ahora vemos que Lerna nos informa que tenemos cambios en test1 y test3, de test2 no porque no depende de test1 pero test3 sí.
+Ahora vemos que Lerna nos informa que tenemos cambios en test1 y test3, de test2 no porque no depende de test1 pero test3 sí y lerna nos informa que si vamos a publicar una nueva versión podemos hacerlo también de test3.
 
 Publicamos la nueva versión con `lerna version`, esta vez como una minor.
 
 ![lerna-version2](https://raw.githubusercontent.com/juanfran/posts/master/tools/lerna/assets/lerna-version2.png)
 
-`lerna add babel-core`
+Lerna ha actualizado la versión de los `package.json` de los repos afectados y ha hecho commit y push del nuevo tag `1.1.0`.
 
-añade babel-core a todos los paquetes
+Este es el ´git diff´ del último commit.
 
-`lerna add module-1 --scope=module-2`
+![git-diff](https://raw.githubusercontent.com/juanfran/posts/master/tools/lerna/assets/git-diff.png)
 
-Si cambio solo test1 y hago lerna changed
-
-lerna notice cli v3.4.3
-lerna info Looking for changed packages since v1.1.0
-test1
-test3
-lerna success found 2 packages ready to publish
-
-luego hago lerna version
-
-lerna notice cli v3.4.3
-lerna info current version 1.1.0
-lerna info Looking for changed packages since v1.1.0
-? Select a new version (currently 1.1.0) Minor (1.2.0)
-
-Changes:
- - test1: 1.1.0 => 1.2.0
- - test3: 1.1.0 => 1.2.0
-
-? Are you sure you want to create these versions? (ynH) 
-
-
-`lerna version`
-
-
-how? 
-https://github.com/facebook/react/tree/master/packages
-https://github.com/babel/babel/blob/master/doc/design/monorepo.md
-
+Por último, otro comando muy práctico es `lerna add` que nos permite añadir dependencias en uno o varios de nuestros paquetes. 
+Por ejemplo si ejecutamos `lerna add babel-core` nos añadirá babel-core en nuestro test paquetes pero si solo queremos hacerlo en uno podemos indicarle un scope `lerna add babel-core --scope=test2`.
 
