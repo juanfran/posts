@@ -24,7 +24,7 @@ cd lerna-example
 git init
 ```
 
-Y ahora lo convertimos en un reposotorio compatible con Lerna.
+Y ahora lo convertimos en un repositorio compatible con Lerna.
 ```shell
 lerna init
 ```
