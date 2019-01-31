@@ -83,14 +83,31 @@ En este ejemplo el qubit que hemos puesto en superposición ha sido "1" 492 vece
 
 #### Entrelazamiento
 
-Ahora vamos a desecadenar un entrelazamiento añadiendo está linea a continuación de la superposición.
+Ahora vamos a desecadenar un [entrelazamiento](https://en.wikipedia.org/wiki/Bell_state) que es incluso más raro que la superposición. Cuando entrelazamos 2 qubits estos se influencian independientemente de a la distacia que se encuentren.
+
+Para enlazar nuestros dos qubits añadimos esta linea a continuación de la superposición.
 
 ```python
 qc.cx(qr[0], qr[1])
 ```
 
-Aquí estamos añadiendo la puerta de control [CNOT](https://en.wikipedia.org/wiki/Controlled_NOT_gate) que se encarga de entrelazar nuestros dos qubits, esto quiere decir que cuando midamos `qr[0]` automáticamente `qr[1]` se volteará si `qr[0]` es 1.
+Aquí estamos añadiendo la puerta de control [CNOT](https://en.wikipedia.org/wiki/Controlled_NOT_gate) que se encarga de entrelazar nuestros dos qubits, esto quiere decir que cuando midamos `qr[0]` automáticamente `qr[1]` se volteará solo si `qr[0]` es 1.
 
+Si ejecutamos ahora el código el siguiente resultado.
+
+```shell
+{'00': 496, '11': 504}
+```
+
+Como vemos tanto `qr[0]` como `qr[1]` siempre dan el mismo resultado cuando los medimos.
+
+#### Circuito
+
+Este es el estado final de nuestro circuito que podeis ver con `print(qc.draw())`.
+
+![circuit](https://raw.githubusercontent.com/juanfran/posts/master/others/quantum-programming/assets/circuit.png)
+
+`q0_0` y `q0_1` son los dos qubits, con la H podemos dondemo hemos aplicado la puerta de Hadamard, con la X vemos que `q0_1` ahora está entrelazado con `q0_0` y por último M son las mediciones.
 
 ------------------------------------
 IBM 16 qubits
