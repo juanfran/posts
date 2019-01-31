@@ -18,11 +18,11 @@ cr = qk.ClassicalRegister(2)
 qc = qk.QuantumCircuit(qr, cr)
 ```
 
-Empezamos usando qiskit para llamar a QuantumRegister, aquí le estamos piendo al framework que nos inicialice un registro con 2 qubits. 
+Empezamos usando qiskit para llamar a QuantumRegister, aquí le estamos pidiendo al framework que nos inicialice un registro con 2 qubits. 
 
-Bien y antes de continuar vamos a explicar muy por encima que es un qubit. Los quibits son el equivalente cuántico a los bits de los ordenadores convencionales. Los qubits también tiene dos posibles estados 0 y 1 pero con algunas particuladidades que vamos a ver más adelante.
+Bien y antes de continuar vamos a explicar muy por encima que es un qubit. Los quibits son el equivalente cuántico a los bits de los ordenadores convencionales. Los qubits también tiene dos posibles estados 0 y 1 pero con algunas particularidades que vamos a ver más adelante.
 
-La siguiente que hacemos es llamar a ClassicalRegister que nos crea un registro con 2 bits convecionales donde iremos mentiendo el resultado los qubits.
+La siguiente que hacemos es llamar a ClassicalRegister que nos crea un registro con 2 bits convencionales donde iremos metiendo el resultado los qubits.
 
 Y por último creamos un circuito virtual donde añadiremos nuestros bits y qubits.
 
@@ -33,9 +33,9 @@ qc.measure(qr[0],cr[0])
 qc.measure(qr[1],cr[1]))
 ```
 
-Aquí estamos pidiendo al circuito dos mediciones, le peditos que lea el valor del qubit `qr[0]` y lo meta en el bit `cr[0]` y hacemos lo mismo con el qubit y el bit 1.
+Aquí estamos pidiendo al circuito dos mediciones, le pedimos que lea el valor del qubit `qr[0]` y lo meta en el bit `cr[0]` y hacemos lo mismo con el qubit y el bit 1.
 
-Por último vamos a instanciar el simulador quántico y pedirle que ejecute el circuito `qc` 1000 veces y pintamos el resultado.
+Por último vamos a instanciar el simulador cuántico y pedirle que ejecute el circuito `qc` 1000 veces y pintamos el resultado.
 
 ```python
 backend = qk.BasicAer.get_backend('qasm_simulator')
@@ -55,17 +55,17 @@ Esto quiere decir que nuestros que al consultar el valor de nuestros dos qubits 
 
 #### Superposición
 
-Bueno como veis nuestro programa cúantico no hace nada muy cuántico pero ahora empieza lo divertido
+Bueno como veis nuestro programa cuántico no hace nada muy cuántico pero ahora empieza lo divertido
 
-Añadimos la siguiente linea a nuestro código justo antes del primer `measure`.
+Añadimos la siguiente línea a nuestro código justo antes del primer `measure`.
 
 ```python
 qc.h(qr[0]) 
 ```
 
-Con esta simple línea estamos diciendo al circuito `qc` que añada una [puerta lógica cuántica](https://en.wikipedia.org/wiki/Quantum_logic_gate) al qubit que hay en la posición 0 de nuestro array de qubits (`qr`), osea es el equivalente a los AND, OR, XOR etc. Con `qc.h` estamos añadiendo al qubit la puerta de Hadamard.
+Con esta simple línea estamos diciendo al circuito `qc` que añada una [puerta lógica cuántica](https://en.wikipedia.org/wiki/Quantum_logic_gate) al qubit que hay en la posición 0 de nuestro array de qubits (`qr`), es decir `c.h` es el equivalente a los AND, OR, XOR etc y con él estamos añadiendo al qubit la puerta de Hadamard.
 
-La puerta de Hadamard nos permite añadir [superposición](https://es.wikipedia.org/wiki/Superposici%C3%B3n_cu%C3%A1ntica) a nuestro qubit. Simplificando mucho esto quiere decir que nuestro qubit entre medición y medición va a estar entre 0 y 1 al mismo tiempo aun que suena muy contra intuitivo.
+La puerta de Hadamard nos permite añadir [superposición](https://es.wikipedia.org/wiki/Superposici%C3%B3n_cu%C3%A1ntica) a nuestro qubit. Simplificando mucho esto quiere decir que nuestro qubit entre medición y medición va a estar entre 0 y 1 al mismo tiempo aunque suena muy contraintuitivo.
 
 Si nos imaginamos una esfera donde el polo superior es 0 y el inferior es 1, la superposición son todos los otros puntos posibles en la superficie.
 
@@ -83,9 +83,9 @@ En este ejemplo el qubit que hemos puesto en superposición ha sido "1" 492 vece
 
 #### Entrelazamiento
 
-Ahora vamos a desecadenar un [entrelazamiento](https://en.wikipedia.org/wiki/Bell_state) que es incluso más raro que la superposición. Cuando entrelazamos 2 qubits estos se influencian independientemente de a la distacia que se encuentren.
+Ahora vamos a desencadenar un [entrelazamiento](https://en.wikipedia.org/wiki/Bell_state) que es incluso más raro que la superposición. Cuando entrelazamos 2 qubits estos se influencian independientemente de a la distancia que se encuentren.
 
-Para enlazar nuestros dos qubits añadimos esta linea a continuación de la superposición.
+Para enlazar nuestros dos qubits añadimos esta línea a continuación de la superposición.
 
 ```python
 qc.cx(qr[0], qr[1])
@@ -103,44 +103,47 @@ Como vemos tanto `qr[0]` como `qr[1]` siempre dan el mismo resultado cuando los 
 
 #### Circuito
 
-Este es el estado final de nuestro circuito que podeis ver con `print(qc.draw())`.
+Este es el estado final de nuestro circuito que podéis ver con `print(qc.draw())`.
 
 ![circuit](https://raw.githubusercontent.com/juanfran/posts/master/others/quantum-programming/assets/circuit.png)
 
-`q0_0` y `q0_1` son los dos qubits, con la H podemos dondemo hemos aplicado la puerta de Hadamard, con la X vemos que `q0_1` ahora está entrelazado con `q0_0` y por último M son las mediciones.
+`q0_0` y `q0_1` son los dos qubits, con la H podemos ver donde hemos aplicado la puerta de Hadamard, con la X vemos que `q0_1` ahora está entrelazado con `q0_0` y por último M son las mediciones.
 
-------------------------------------
-IBM 16 qubits
-- exponential growth (1, 2, 4, 8, 16, 32... 2048, 4096, 8192), si lo multiplimas 31 veces salen x millones
+#### Ordenador cúantico real
 
-51 (17 x 3)
+Ahora que hemos terminado vamos a ejecutar el código en un ordenador cuántico real.
 
-- superposition and entanglement 
+Para ello podemos usar alguno de los 4 ordenadores cuánticos que IBM de entre 5 y 16 qubits que IBM ofrece gratuitamente.
 
-superposición 
+Para hacer tenemos que registrarnos en IBM Q y generar un token [aquí](https://quantumexperience.ng.bluemix.net/qx/account/advanced)
 
-en un ordenador convencional tenemos un bit que puede ser 0 o 1
+![token](https://raw.githubusercontent.com/juanfran/posts/master/others/quantum-programming/assets/token.png)
 
-un qbit puede ser 0 o 1 o estar en un estado de superposición que puede ser cualquier punto de la superficie de la esfera, al medir seguirla siendo 0 o 1 pero la probabilidad cambia en función del estado de qbit
+Vamos a modificar el código para quitar el simulador y añadir la llamada real al ordenador cuántico.
 
-pero en un qbit cuando lo midamos será 0 o 1 como un bit normal
-pero antes de medir puede estar en 0 y 1 al mismo tiempo.
+Primero vamos a poner el token que hemos generado.
 
-Entanglement
+```python
+token = "TOKEN"
+qk.IBMQ.save_account(token)
+qk.IBMQ.load_accounts()
+```
 
-https://github.com/Qiskit/ibmqx-user-guides/blob/master/rst/beginners-guide/007-Entanglement/001-Entanglement.rst
+Segundo vamos a usar qiskit para que nos diga el ordenador cuántico menos ocupado para ponernos a la cola de ejecución, como nuestra app solo necesita 2 qubits nos vale cualquiera.
 
-si tienes dos electrones entrelazados si giras uno hacia arriba
-el otro girará hacia abajo independienteme de a que distancia esten.
+```python
+from qiskit.providers.ibmq import least_busy
 
-Osea en el momento que medimos el primero electro si está hacia arriba sabemos que el otro está hacia abajo
+#backend=qk.BasicAer.get_backend('qasm_simulator')
+backend = least_busy(qk.IBMQ.backends())
+```
 
-hadamard gate
+Y ahora ejecutamos. Esta vez la respuesta no será instantánea depende de lo ocupado que esté el ordenador cuántico.
 
+```shell
+{'11': 345, '10': 102, '00': 489, '01': 64}
+```
 
-python3
+Como podéis ver en mi resultado no ha funcionado igual que en el simulador, tenemos una minoría de '10' y '01', eso significa que el entrelazamiento no ha funcionado como se esperaba, esto es normal, estamos ejecutando nuestro código sobre prototipos de ordenadores cuánticos y todavía no son perfectos.
 
-
-
-
-crear cuenta https://quantumexperience.ng.bluemix.net/qx/account/advanced
+¡Enhorabuena! has ejecutado tus primeras líneas de código en un ordenador cuántico real.
