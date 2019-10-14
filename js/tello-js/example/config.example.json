@@ -1,0 +1,5 @@
+{
+  "DRONE_ADDRESS": "192.168.1.1",
+  "PORT": "3000",
+  "STATE_PORT": "8890"
+}

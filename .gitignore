@@ -1,1 +1,5 @@
 private.md
+
+node_modules/
+
+js/tello-js/example/config.json
