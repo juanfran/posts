@@ -1,5 +1,7 @@
 {
-  "DRONE_ADDRESS": "192.168.1.1",
-  "PORT": "3000",
-  "STATE_PORT": "8890"
+  "droneAddress": "192.168.1.1",
+  "port": "3000",
+  "statePort": "8890",
+  "speed": 50
 }
+
