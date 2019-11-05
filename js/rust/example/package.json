@@ -4,10 +4,13 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
-    "copy-webpack-plugin": "^5.0.4",
     "wasm": "file:./pkg/"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
