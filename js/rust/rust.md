@@ -1,4 +1,10 @@
-# WebAssembly para desarrolladores JS
+# WebAssembly con Rust para desarrolladores JS
+
+## Qué es WebAssembly
+
+## Por qué WebAssembly
+
+## Por qué Rust
 
 ## Preparando el entorno
 
@@ -174,7 +180,7 @@ Ya tenemos todo listo, ahora ejecutamos `npx webpack-dev-server` y vamos a http:
 
 ![alert](https://raw.githubusercontent.com/juanfran/posts/master/js/rust/assets/alert.png)
 
-No es muy impresionate pero como veis la comunicación es sencilla. 
+No es muy impresionate pero como veis la comunicación es sencilla.
 
 ### Rendimiento
 
@@ -220,6 +226,7 @@ main.js:22 fibonacciJS: 1017.113037109375ms
 Como veis JS tarda el doble que Rust en hacer la misma operación.
 
 ### Debugger
+
 
 ### DOM
 
