@@ -18,3 +18,5 @@ console.timeEnd('fibonacciRust');
 console.time('fibonacciJS');
 console.log(fibonacciJS(runs));
 console.timeEnd('fibonacciJS');
+
+// wasm.init();
