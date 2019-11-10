@@ -1,16 +1,16 @@
 # WebAssembly con Rust para desarrolladores JS
 
-Si eres desarrollador de JS en este tutorial vamos a ver algunos ejemplos básicos de cómo puedes ir empezando a usar [WebAssembly](https://webassembly.org/) escrito en [Rust](https://www.rust-lang.org/) en tus aplicaciones JavaScript.
+Si eres desarrollador de JavaScript en este tutorial vamos a ver algunos ejemplos básicos de cómo puedes ir empezando a usar [WebAssembly](https://webassembly.org/) escrito en [Rust](https://www.rust-lang.org/) en tus aplicaciones JS.
 
 ## Instalación (unix)
 
-Lo primero que vamos hacer es instalar `rustup` que es el instalador oficial de Rust, nos permitirá cambiar entre versiones de forma fácil.
+Lo primero que vamos hacer es instalar `rustup` que es el instalador oficial de Rust. Esto nos permitirá cambiar entre versiones de forma fácil.
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-Ahora instalamos `wasm-pack`. Con esta biblioteca podemos convertir nuestro código de Rust a WebAssembly muy fácilmente.
+Ahora instalamos `wasm-pack`. Con esta biblioteca podemos convertir nuestro código de Rust a WebAssembly fácilmente.
 
 ```bash
 curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
@@ -18,7 +18,7 @@ curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
 ## Hola mundo en Rust
 
-Primero creamos la siguiente estructura de archivos.
+A continuación, creamos la siguiente estructura de archivos.
 
 ```shell
 ├── Cargo.toml
@@ -28,11 +28,11 @@ Primero creamos la siguiente estructura de archivos.
 
 #### Cargo.toml
 
-`Cargo.toml` es el equivalente al típico `package.json`. Indicamos la información básica nuestra biblioteca de Rust y añadimos como dependencia `wasm-bindgen` que nos permitirá comunicar JavaScript y Rust.
+`Cargo.toml` es el equivalente al típico `package.json`. Indicamos la información básica en nuestra biblioteca de Rust y añadimos como dependencia `wasm-bindgen` que nos ayudará a comunicar JavaScript y Rust.
 
-Con `wasm-bindgen` importamos a Rust funcionalidades de JS como manipulación del DOM o logging y exportamos funcionalidad que hagamos en Rust a JS. Además si usamos typescript nos generará los `.d.ts`.
+Con `wasm-bindgen` importamos a Rust la manipulación del DOM o logging propias de JS y exportamos a JS la funcionalidad de Rust. Además, si usamos Typescript `wasm-bindgen` nos generará los `.d.ts`.
 
-Por último añadimos `crate-type = ["cdylib"]` esto le dice a Rust que al hacer build haga una versión en `cdylib` de nuestro paquete, osea que genere los .so, .dll.
+Por último, añadimos `crate-type = ["cdylib"]`, esto le dice a Rust que al hacer build haga una versión en `cdylib` de nuestro paquete, o sea, que genere los .so, .dll.
 
 ```toml
 [package]
@@ -49,7 +49,7 @@ wasm-bindgen = "0.2.50"
 ```
 
 #### src/lib.rs
-En `lib.rs` vamos a meter todo el código de ejemplo en Rust. Si no habéis programado antes en Rust podéis consultar el libro gratuito. [The Rust Programming Language](https://doc.rust-lang.org/book/). Voy a intentar que los ejemplos sean lo más sencillos posible para que podais entender lo suficiente y continuar incluso sin entender del todo Rust.
+En `lib.rs` vamos a meter todo el código de ejemplo en Rust. Si no has programado antes en Rust puedes consultar el libro gratuito. [The Rust Programming Language](https://doc.rust-lang.org/book/). Vamos a intentar que los ejemplos sean lo más sencillos posible para que puedas desenvolverte lo suficiente sin entender del todo Rust.
 
 En este código empezamos a usar `wasm-bindgen` para comunicarnos con JS. En `extern` estamos diciéndole a Rust que vamos a ejecutar una función definida en otro módulo, wasm-bindgen se encargará de facilitar el `alert` de JS. Y en `pub fn greet` estamos creando una función pública que podremos ejecutar desde JS y que lanzará el `alert` con una cadena de texto.
 
@@ -67,15 +67,15 @@ pub fn greet(name: &str) {
 }
 ```
 
-Ahora si todo es correcto podemos ejecutar `wasm-pack build` y la primera vez veremos algo como esto.
+Ahora si todo es correcto podemos ejecutar `wasm-pack build` y la primera vez veremos algo como esto:
 
 ![build](https://raw.githubusercontent.com/juanfran/posts/master/js/rust/assets/build.png)
 
-Al terminar en el directorio aparecerán los siguientes archivos.
+Al terminar en el directorio aparecerán los siguientes archivos:
 
 `hello_rust_bg.wasm` Este archivo contiene el binario generado por Rust de nuestro código en ´lib.rs`.
 
-`hello_rust.js` Este archivo es generado por `wasm-bindgen` y actúa como puente entre el binario y JS, se encarga de enviarle al binario las funciones de JS que pueda necesitar y la conversión de tipos si es necesaria. Echarle un vistazo porque es bastante interesante.
+`hello_rust.js` Este archivo es generado por `wasm-bindgen` y actúa como puente entre el binario y JS. Se encarga de enviarle al binario las funciones de JS que pueda necesitar y la conversión de tipos si es necesaria. Echale un vistazo porque es bastante interesante.
 
 `hello_rust.d.ts` Contiene la declaración de tipos de Typescript.
 
@@ -83,7 +83,7 @@ Al terminar en el directorio aparecerán los siguientes archivos.
 
 ## Hola mundo en JS -> Rust
 
-Ahora en la raíz de nuestro proyecto vamos a crear más archivos para que nos quede la siguiente estructura.
+Ahora en la raíz de nuestro proyecto vamos a crear más archivos para que nos quede la siguiente estructura:
 
 ```shell
 ├── pkg
@@ -99,7 +99,7 @@ Ahora en la raíz de nuestro proyecto vamos a crear más archivos para que nos q
 
 #### package.json
 
-En este `package.json` hemos instalado varias dependencias `webpack` y `webpack-dev-server` para gestionar los módulos y servir nuestro ejemplo. En `dependencies` creamos el módulo `wasm` que apunta a la carpeta `pkg` creada en el build anterior.
+En este `package.json` hemos instalado varias dependencias como `webpack` y `webpack-dev-server` para gestionar los módulos y servir nuestro ejemplo. En `dependencies` creamos el módulo `wasm` que apunta a la carpeta `pkg` creada en el build anterior.
 
 ```json
 {
@@ -125,7 +125,7 @@ En este `package.json` hemos instalado varias dependencias `webpack` y `webpack-
 
 #### index.html
 
-Creamos un html básico que simplemente llama a init.js que se encargará de hacer el bootstrap del ejemplo.
+Creamos un html básico que simplemente llama a init.js y que se encargará de hacer el bootstrap del ejemplo.
 
 ```html
 <!DOCTYPE html>
@@ -151,7 +151,7 @@ import('./main.js')
 
 #### webpack.config.js
 
-Configuración básica de webpack, importante indicar en el entry el mismo fichero que en nuestro index.html.
+Esta es la configuración básica de webpack. Es importante indicar en el entry el mismo fichero que en nuestro index.html.
 
 ```js
 module.exports = {
@@ -168,21 +168,21 @@ import * as wasm from 'wasm';
 wasm.greet('Rust');
 ```
 
-Cómo veis importamos `wasm` tal como hemos indicado en el `package.json` y llamamos a la función definida en Rust de `greet`.
+Importamos `wasm` tal como hemos indicado en el `package.json` y llamamos a la función definida en Rust de `greet`.
 
 Ya tenemos todo listo, ahora ejecutamos `npx webpack-dev-server` y vamos a http://localhost:8080/
 
 ![alert](https://raw.githubusercontent.com/juanfran/posts/master/js/rust/assets/alert.png)
 
-No es muy impresionante pero como veis la comunicación es muy sencilla.
+No es muy impresionante, pero como ves la comunicación es muy sencilla.
 
-Si queremos simplificar el proceso podemos instalar el plugin de webpack [wasm-pack-plugin](https://github.com/wasm-tool/wasm-pack-plugin) para que no  tengamos que hacer `wasm-pack build` por cada cambio en Rust.
+Si queremos simplificar el proceso podemos instalar el plugin de webpack [wasm-pack-plugin](https://github.com/wasm-tool/wasm-pack-plugin) para no tener que hacer `wasm-pack build` por cada cambio en Rust.
 
 ## Rendimiento
 
-Una de las ventajas de Rust vs JS es el rendimiento, aunque no es un ejemplo muy realista por su sencillez y exigencia vamos a ejecutar fibonacci de forma recursiva en JS y Rust para ver las diferencias.
+Una de las ventajas de Rust vs JS es el rendimiento, aunque no es un ejemplo muy realista por su sencillez y exigencia, vamos a ejecutar Fibonacci de forma recursiva en JS y Rust para ver las diferencias.
 
-Primero añadimos fibonacci como una nueva función pública en `src/lib.rs` y volvemos a lanzar `wasm-pack build`.
+Primero añadimos Fibonacci como una nueva función pública en `src/lib.rs` y volvemos a lanzar `wasm-pack build`.
 
 ```rust
 #[wasm_bindgen]
@@ -192,7 +192,7 @@ pub fn fib(n: i32) -> u64 {
 }
 ```
 
-En `main.js` escribimos la misma función de fibonacci en JS. A continuación vamos a medir el tiempo de ejecución en Rust y JS con índice 40.
+En `main.js` escribimos la misma función de Fibonacci en JS. A continuación, vamos a medir el tiempo de ejecución en Rust y JS con índice 40.
 
 ```js
 import * as wasm from "wasm";
@@ -205,25 +205,25 @@ function fibonacciJS(n) {
   return fibonacciJS(n - 1) + fibonacciJS (n - 2)
 }
 
-console.time('fibonacciRust');
+console.time('FibonacciRust');
 wasm.fib(40);
-console.timeEnd('fibonacciRust');
+console.timeEnd('FibonacciRust');
 
-console.time('fibonacciJS');
+console.time('FibonacciJS');
 fibonacciJS(40);
-console.timeEnd('fibonacciJS');
+console.timeEnd('FibonacciJS');
 ```
 
 ```shell
-main.js:18 fibonacciRust: 489.605712890625ms
-main.js:22 fibonacciJS: 1017.113037109375ms
+main.js:18 FibonacciRust: 489.605712890625ms
+main.js:22 FibonacciJS: 1017.113037109375ms
 ```
 
-Como veis JS tarda el doble que Rust en hacer la misma operación.
+Como te habrás dado cuenta JS tarda el doble que Rust en hacer la misma operación.
 
 ## DOM
 
-Con `wasm-bindgen` también podemos manipular el DOM desde Rust, pero necesitamos una nueva la biblioteca, `web-sys`. Primero la añadimso en el `Cargo.toml` con las features que queramos.
+Con `wasm-bindgen` también podemos manipular el DOM desde Rust, pero necesitamos una nueva la biblioteca, `web-sys`. Primero la añadimos en el `Cargo.toml` con las features que queramos.
 
 ```toml
 [dependencies.web-sys]
@@ -238,7 +238,7 @@ features = [
 ```
 
 
-Editamos `src/lib.rs` y añadimos la siguiente función.
+Editamos `src/lib.rs` y añadimos la siguiente función:
 
 ```rust
 #[wasm_bindgen(start)]
@@ -281,7 +281,7 @@ Si volvemos hacer `wasm-pack build` podemos ver que al cargar tenemos h1 creado 
 
 ## Conclusión 
 
-Creo que hemos podido cubrir lo básico de lo imprescindible para poder ejecutar WebAssemby escrito Rust en JavaScript, a partir de aquí os dejo un links para que podáis seguir aprendiendo. Espero que os haya sido útil.
+Hemos podido hacer lo básico para poder ejecutar WebAssemby, escrito en Rust, en JavaScript. Si te interesa seguir aprendiendo aquí tienes los siguientes enlaces. Espero que te haya sido útil.
 
 https://doc.rust-lang.org/book/
 
