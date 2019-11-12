@@ -180,7 +180,7 @@ Si queremos simplificar el proceso podemos instalar el plugin de webpack [wasm-p
 
 ## Rendimiento
 
-Una de las ventajas de Rust vs JS es el rendimiento, aunque no es un ejemplo muy realista por su sencillez y exigencia, vamos a ejecutar Fibonacci de forma recursiva en JS y Rust para ver las diferencias.
+Una de las ventajas de Rust vs JS es el rendimiento, aunque este no es un ejemplo muy realista por su sencillez y exigencia, vamos a ejecutar Fibonacci de forma recursiva en JS y Rust para ver las diferencias.
 
 Primero añadimos Fibonacci como una nueva función pública en `src/lib.rs` y volvemos a lanzar `wasm-pack build`.
 
