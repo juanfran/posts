@@ -85,6 +85,10 @@ Lo siguiente que vamos hacer es crear un pequeño terreno por el que poder despl
 
 Ahora querremos cambiar la posición y tamaño del cubo, para ello en el viewport en la parte superior izquierda podemos elegir los siguientes modos Select mode (Q), Move mode (W) y Scale Mode (R). Ahora agrandamos el cubo y lo dejamos plano.
 
+![camibar tamaño cubo](https://raw.githubusercontent.com/juanfran/posts/master/godot/getting-started-godot-vr/assets/mesh-shape.gif)
+
+Este debería ser el aspecto de nuestra escena.
+
 ![Viewport con StaticBody](https://raw.githubusercontent.com/juanfran/posts/master/godot/getting-started-godot-vr/assets/final-static-body.png)
 
 Por último añadiremos el teletransporte habitual en mucho juego de realidad virtual, gracias a los plugins que hemos instalado es muy sencillo.
