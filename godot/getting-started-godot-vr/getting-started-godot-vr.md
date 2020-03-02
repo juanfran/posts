@@ -95,6 +95,9 @@ Por último añadiremos el teletransporte habitual en mucho juego de realidad vi
 
 Seleccionamos el nodo de la mano con la que queramos usar el teletransporte por ejemplo `Right_Hand`, botón derecho, click en `Instance child scene` y elegimos `Function_Teleport`.
 
+![Teleport node](https://raw.githubusercontent.com/juanfran/posts/master/godot/getting-started-godot-vr/assets/function-teleport.png)
+
+
 Si le damos a play vereis que tenemos el clásico sistema de teletransporte pulsando gatillo, apuntando y soltando.
 
 ![Demo teletransporte](https://raw.githubusercontent.com/juanfran/posts/master/godot/getting-started-godot-vr/assets/demo2.gif)
