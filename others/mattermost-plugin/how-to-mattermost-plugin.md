@@ -1,8 +1,8 @@
 # Cómo hacer un plugin para Mattermost
 
-// final gif
+![demo](https://raw.githubusercontent.com/juanfran/posts/master/others/mattermost-plugin/assets/demo-random-user.gif)
 
-En este tutorial vamos a crear un sencillo plugin para Mattermost que no servirá de base de conocimiento para desarrollar plugins más complejos.
+En este tutorial vamos a crear un sencillo plugin para Mattermost con Go que nos servirá de base de conocimiento para desarrollar plugins más complejos.
 
 En el ejemplo que vamos a desarrollar el plugin responderá a un comando con un usuario random conectado al canal.
 
@@ -26,7 +26,7 @@ Para este plugin, necesitamos tener algunos usuarios extra. Para crear nuevos us
 
 Ya tenemos Mattermost instalado con varios usuarios de prueba, vamos a empezar el plugin.
 
-## Plugin de usuario aleatorio
+## El Plugin
 
 La forma más sencilla de empezar un plugin desde cero es partir de [este template](https://github.com/mattermost/mattermost-plugin-starter-template) que nos da Mattermost.
 
@@ -66,4 +66,227 @@ Si todo ha ido bien vemos este mensaje `plugin built at: dist/random-user-plugin
 
 Go to System Console > Plugins > Management upload and enable the plugin.
 
-Para subir un nuevo pu
+Para subir el plugin vamos a System Console > Plugins > Plugin Management > Upload plugin, cuando esté subido lo activamos.
+
+![upload1](https://raw.githubusercontent.com/juanfran/posts/master/others/mattermost-plugin/assets/system-console.jpg)
+
+![upload2](https://raw.githubusercontent.com/juanfran/posts/master/others/mattermost-plugin/assets/upload-plugin.jpg)
+
+Tenemos que seguir estos pasos cada vez que queramos probar nuestro plugin. El que acabamos de subir no tiene nada asi que volvamos al código para empezar a programar.
+
+Abrimos `server/plugin.go`, vamos a empezar añadiendo un hook cuando el plugin se active. En este hook vamos a registrar un bot que devolverá el usuario elegido y el comando a utilizar para que el bot responda.
+
+Primero creamos el hook.
+
+```go
+func (p *Plugin) OnActivate() error {
+
+}
+```
+
+Ahora registramos el boot dentro de la función `OnActivate`
+```go
+	bot := &model.Bot{
+		Username:    "random-user",
+		DisplayName: "RandomUser",
+	}
+	botUserID, ensureBotErr := p.Helpers.EnsureBot(bot)
+
+	if ensureBotErr != nil {
+		return ensureBotErr
+    }
+
+    p.botUserID = botUserID
+```
+
+En las primeras lineas estamos dando un username y un display name al boot. Para ello usamos el modelo de Mattermost que podeis importar desde `github.com/mattermost/mattermost-server/v5/model`. 
+
+En la siguientes linas creamos el bot con `p.Helpers.EnsureBot` y gestionamos el error si hubiese alguno.
+
+Por último guardamos el id del bot recien creado en el plugin, para ello tenemos que extender el modelo de plugin que tenemos al inicio del fichero. Lo dejamos así: 
+
+```go
+type Plugin struct {
+	plugin.MattermostPlugin
+
+	configurationLock sync.RWMutex
+
+    configuration *configuration
+    
+    // Nuestro bot id
+	botUserID string
+}
+```
+
+Ahora vamos a registrar el comando, es decir, qué tiene que escribir el usuario para que el bot reaccione. Añadimos las siguientes lineas al final de `OnActivate`:
+
+```go
+	return p.API.RegisterCommand(&model.Command{
+		// Comando
+        Trigger: "random-user",
+        AutoComplete: true,
+	})
+```
+
+`RegisterCommand` tiene muchas más opciones que podeis consultar [aquí](https://pkg.go.dev/github.com/mattermost/mattermost-server/v5/model#Command).
+
+Ahora que hemos registrado nuestro bot y el comando, vamos a escribir el código que se va ejecutar cuando se invoque a `/random-user`.
+
+Primero creamos un nuevo hook que se lanzará cuando se ejecute un comando.
+
+```go
+func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
+    
+}
+```
+
+Necesitamos todos los usuarios del canal actual. Para ello usaremos `GetUsersInChannel` de la api de Mattermost.
+
+`GetUsersInChannel(channelId, sortBy string, page, perPage int) ([]*model.User, *model.AppError)`
+
+Como veis necesitamos el id del canal que lo tenemos entre los argumentos que recibe `ExecuteCommand`  en `args.ChannelId`. También tenemos que paginar, en este caso le pediremos la página 0 con 1000 usuarios para simplificar. El código quedaría así:
+
+```go
+users, _ := p.API.GetUsersInChannel(args.ChannelId, "username", 0, 1000)
+```
+
+Ahora tenemos todos los usuario en la variable `users` pero entre ellos se pueden encontar bots asi que vamos a filtrarlos, vamos a crear una función que se encargue de ellos.
+
+```go
+func (p *Plugin) filterBots(users []*model.User) []*model.User {
+	var noBots []*model.User
+
+	for _, user := range users {
+		if !user.IsBot {
+			noBots = append(noBots, user)
+		}
+	}
+
+	return noBots
+}
+```
+
+y la usamos:
+
+```go
+	users, _ := p.API.GetUsersInChannel(args.ChannelId, "username", 0, 1000)
+	users = p.filterBots(users)
+```
+
+En users ya tenemos un listado de usuarios libre de bots, ahora solo tenemos que elegir uno aleatorio y creamos un mensaje para mencionarle.
+
+```go
+	usersLen := len(users)
+    // Int, aleatorio entre 0 y el número de usuarios.
+    userIndex := rand.Intn(usersLen)
+    // Accedemos al usuario usando el indice aleatorio `users[userIndex]` y nos quedamos con su username
+	msg := "@" + users[userIndex].Username
+```
+
+Ya lo tenemos casi listo ahora solo tenemos que hacer que el bot escriba el mensaje de respuesta mencionando al usuario seleccionado.
+
+```go
+    // Rellenamos la información del post, usando los datos del canal actual, el bot id que guardamos anteriormente y el mensaje que acabamos de rellenar con el nombre de usuario.
+	post := &model.Post{
+		UserId:    p.botUserID,
+		ChannelId: args.ChannelId,
+		RootId:    args.RootId,
+		Message:   msg,
+	}
+
+    // Creamos el post
+	_, createPostError := p.API.CreatePost(post)
+
+	if createPostError != nil {
+		return nil, model.NewAppError("ExecuteCommand", "error random-user", nil, createPostError.Error(), http.StatusInternalServerError)
+	}
+
+    // Respuesta al comando, en nuestro caso no necesitamos ninguna
+	return &model.CommandResponse{}, nil
+```
+
+Ya tenemos el plugin listo, ahora si hacemos `make` y repetimos los pasos podremos ver el plugin en acción como hemos visto en el gif al inicio del tutorial.
+
+Este es el código completo en `plugin.go`
+
+```go
+package main
+
+import (
+	"math/rand"
+	"sync"
+
+	"github.com/mattermost/mattermost-server/v5/model"
+	"github.com/mattermost/mattermost-server/v5/plugin"
+)
+
+type Plugin struct {
+	plugin.MattermostPlugin
+
+	configurationLock sync.RWMutex
+
+	configuration *configuration
+
+	botUserID string
+}
+
+func (p *Plugin) OnActivate() error {
+	bot := &model.Bot{
+		Username:    "random-user",
+		DisplayName: "RandomUser",
+	}
+	botUserID, ensureBotErr := p.Helpers.EnsureBot(bot)
+
+	if ensureBotErr != nil {
+		return ensureBotErr
+	}
+
+	p.botUserID = botUserID
+
+	return p.API.RegisterCommand(&model.Command{
+		// Comando
+		Trigger:      "random-user",
+		AutoComplete: true,
+	})
+}
+
+func (p *Plugin) filterBots(users []*model.User) []*model.User {
+	var noBots []*model.User
+
+	for _, user := range users {
+		if !user.IsBot {
+			noBots = append(noBots, user)
+		}
+	}
+
+	return noBots
+}
+
+// ExecuteCommand run command
+func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
+	users, _ := p.API.GetUsersInChannel(args.ChannelId, "username", 0, 1000)
+
+	users = p.filterBots(users)
+
+	usersLen := len(users)
+	userIndex := rand.Intn(usersLen)
+	msg := "@" + users[userIndex].Username
+
+	post := &model.Post{
+		UserId:    p.botUserID,
+		ChannelId: args.ChannelId,
+		RootId:    args.RootId,
+		Message:   msg,
+	}
+
+	p.API.CreatePost(post)
+
+	return &model.CommandResponse{}, nil
+}
+```
+
+Para conocer qué más podeis hacer con los plugin de Mattermost os recomiendo que echéis un vistazo a [la referencia de la API](https://developers.mattermost.com/extend/plugins/server/reference/).
+
+Y [aquí](https://developers.mattermost.com/contribute/server/plugins/) teneis un overview general de cómo hacer plugins con Mattermost.
+
+Por último [aquí](https://github.com/juanfran/mattermost-random-user) teneis un ejemplo más completo con distintas configuraciones, por ejemplo solo elegir un usuario que esté online, o un listado de usuarios.
