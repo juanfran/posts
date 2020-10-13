@@ -86,17 +86,18 @@ func (p *Plugin) OnActivate() error {
 
 Ahora registramos el boot dentro de la función `OnActivate`
 ```go
-	bot := &model.Bot{
-		Username:    "random-user",
-		DisplayName: "RandomUser",
-	}
-	botUserID, ensureBotErr := p.Helpers.EnsureBot(bot)
+bot := &model.Bot{
+  Username:    "random-user",
+  DisplayName: "RandomUser",
+}
 
-	if ensureBotErr != nil {
-		return ensureBotErr
-    }
+botUserID, ensureBotErr := p.Helpers.EnsureBot(bot)
 
-    p.botUserID = botUserID
+if ensureBotErr != nil {
+  return ensureBotErr
+}
+
+p.botUserID = botUserID
 ```
 
 En las primeras lineas estamos dando un username y un display name al boot. Para ello usamos el modelo de Mattermost que podeis importar desde `github.com/mattermost/mattermost-server/v5/model`. 
@@ -107,25 +108,25 @@ Por último guardamos el id del bot recien creado en el plugin, para ello tenemo
 
 ```go
 type Plugin struct {
-	plugin.MattermostPlugin
+  plugin.MattermostPlugin
 
-	configurationLock sync.RWMutex
+  configurationLock sync.RWMutex
 
-    configuration *configuration
+  configuration *configuration
     
-    // Nuestro bot id
-	botUserID string
+  // Nuestro bot id
+  botUserID string
 }
 ```
 
 Ahora vamos a registrar el comando, es decir, qué tiene que escribir el usuario para que el bot reaccione. Añadimos las siguientes lineas al final de `OnActivate`:
 
 ```go
-	return p.API.RegisterCommand(&model.Command{
-		// Comando
-        Trigger: "random-user",
-        AutoComplete: true,
-	})
+return p.API.RegisterCommand(&model.Command{
+  // Comando
+  Trigger: "random-user",
+  AutoComplete: true,
+})
 ```
 
 `RegisterCommand` tiene muchas más opciones que podeis consultar [aquí](https://pkg.go.dev/github.com/mattermost/mattermost-server/v5/model#Command).
@@ -169,40 +170,40 @@ func (p *Plugin) filterBots(users []*model.User) []*model.User {
 y la usamos:
 
 ```go
-	users, _ := p.API.GetUsersInChannel(args.ChannelId, "username", 0, 1000)
-	users = p.filterBots(users)
+users, _ := p.API.GetUsersInChannel(args.ChannelId, "username", 0, 1000)
+users = p.filterBots(users)
 ```
 
 En users ya tenemos un listado de usuarios libre de bots, ahora solo tenemos que elegir uno aleatorio y creamos un mensaje para mencionarle.
 
 ```go
-	usersLen := len(users)
-    // Int, aleatorio entre 0 y el número de usuarios.
-    userIndex := rand.Intn(usersLen)
-    // Accedemos al usuario usando el indice aleatorio `users[userIndex]` y nos quedamos con su username
-	msg := "@" + users[userIndex].Username
+usersLen := len(users)
+// Int, aleatorio entre 0 y el número de usuarios.
+userIndex := rand.Intn(usersLen)
+// Accedemos al usuario usando el indice aleatorio `users[userIndex]` y nos quedamos con su username
+msg := "@" + users[userIndex].Username
 ```
 
 Ya lo tenemos casi listo ahora solo tenemos que hacer que el bot escriba el mensaje de respuesta mencionando al usuario seleccionado.
 
 ```go
-    // Rellenamos la información del post, usando los datos del canal actual, el bot id que guardamos anteriormente y el mensaje que acabamos de rellenar con el nombre de usuario.
-	post := &model.Post{
-		UserId:    p.botUserID,
-		ChannelId: args.ChannelId,
-		RootId:    args.RootId,
-		Message:   msg,
-	}
+// Rellenamos la información del post, usando los datos del canal actual, el bot id que guardamos anteriormente y el mensaje que acabamos de rellenar con el nombre de usuario.
+post := &model.Post{
+  UserId:    p.botUserID,
+  ChannelId: args.ChannelId,
+  RootId:    args.RootId,
+  Message:   msg,
+}
 
-    // Creamos el post
-	_, createPostError := p.API.CreatePost(post)
+// Creamos el post
+_, createPostError := p.API.CreatePost(post)
 
-	if createPostError != nil {
-		return nil, model.NewAppError("ExecuteCommand", "error random-user", nil, createPostError.Error(), http.StatusInternalServerError)
-	}
+if createPostError != nil {
+  return nil, model.NewAppError("ExecuteCommand", "error random-user", nil, createPostError.Error(), http.StatusInternalServerError)
+}
 
-    // Respuesta al comando, en nuestro caso no necesitamos ninguna
-	return &model.CommandResponse{}, nil
+// Respuesta al comando, en nuestro caso no necesitamos ninguna
+return &model.CommandResponse{}, nil
 ```
 
 Ya tenemos el plugin casi listo, vamos a añadir una última funcionalidad para ver compo poder añadir una pantalla de opcines.
@@ -210,37 +211,37 @@ Ya tenemos el plugin casi listo, vamos a añadir una última funcionalidad para 
 Abrimos `plugin.json` y añadimos un radiobutton para elegir si queremos añadir `@` en las menciones o no. Podeis ver opciones para los settings [aquí](https://developers.mattermost.com/extend/plugins/manifest-reference/#settings_schema.settings.type)
 
 ```json
-  "settings_schema": {
-      "header": "",
-      "footer": "",
-      "settings": [
-          {
-              "key": "At",
-              "display_name": "Mención con @",
-              "type": "bool",
-              "default": true
-          }
-      ]
-  }
+"settings_schema": {
+    "header": "",
+    "footer": "",
+    "settings": [
+        {
+            "key": "At",
+            "display_name": "Mención con @",
+            "type": "bool",
+            "default": true
+        }
+    ]
+}
 ```
 
 Modificamos `plugin.go` para leer la configuración:
 
 ```go
-	config := p.getConfiguration()
-	at := config.At
+config := p.getConfiguration()
+at := config.At
 
-	usersLen := len(users)
-	userIndex := rand.Intn(usersLen)
-	username := users[userIndex].Username
+usersLen := len(users)
+userIndex := rand.Intn(usersLen)
+username := users[userIndex].Username
 
-	msg := ""
+msg := ""
 
-	if at {
-		msg = "@" + username
-	} else {
-		msg = username
-	}
+if at {
+  msg = "@" + username
+} else {
+  msg = username
+}
 ```
 
 Y añadimos el nuevo campo al módelo de la configuración en `server/configuration.go`.
@@ -295,7 +296,6 @@ func (p *Plugin) OnActivate() error {
 	p.botUserID = botUserID
 
 	return p.API.RegisterCommand(&model.Command{
-		// Comando
 		Trigger:      "random-user",
 		AutoComplete: true,
 	})
@@ -313,16 +313,15 @@ func (p *Plugin) filterBots(users []*model.User) []*model.User {
 	return noBots
 }
 
-// ExecuteCommand run command
 func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
-	users, _ := p.API.GetUsersInChannel(args.ChannelId, "username", 0, 1000)
+  users, _ := p.API.GetUsersInChannel(args.ChannelId, "username", 0, 1000)
 
   users = p.filterBots(users)
-  
-  config := p.getConfiguration()
-	at := config.At
 
-	usersLen := len(users)
+  config := p.getConfiguration()
+  at := config.At
+
+  usersLen := len(users)
   userIndex := rand.Intn(usersLen)
   username := users[userIndex].Username
 
@@ -334,16 +333,16 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
     msg = username
   }
 
-	post := &model.Post{
-		UserId:    p.botUserID,
-		ChannelId: args.ChannelId,
-		RootId:    args.RootId,
-		Message:   msg,
-	}
+  post := &model.Post{
+    UserId:    p.botUserID,
+    ChannelId: args.ChannelId,
+    RootId:    args.RootId,
+    Message:   msg,
+  }
 
-	p.API.CreatePost(post)
+  p.API.CreatePost(post)
 
-	return &model.CommandResponse{}, nil
+  return &model.CommandResponse{}, nil
 }
 ```
 
