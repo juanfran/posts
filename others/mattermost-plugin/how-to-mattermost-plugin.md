@@ -205,6 +205,57 @@ Ya lo tenemos casi listo ahora solo tenemos que hacer que el bot escriba el mens
 	return &model.CommandResponse{}, nil
 ```
 
+Ya tenemos el plugin casi listo, vamos a añadir una última funcionalidad para ver compo poder añadir una pantalla de opcines.
+
+Abrimos `plugin.json` y añadimos un radiobutton para elegir si queremos añadir `@` en las menciones o no. Podeis ver opciones para los settings [aquí](https://developers.mattermost.com/extend/plugins/manifest-reference/#settings_schema.settings.type)
+
+```json
+  "settings_schema": {
+      "header": "",
+      "footer": "",
+      "settings": [
+          {
+              "key": "At",
+              "display_name": "Mención con @",
+              "type": "bool",
+              "default": true
+          }
+      ]
+  }
+```
+
+Modificamos `plugin.go` para leer la configuración:
+
+```go
+	config := p.getConfiguration()
+	at := config.At
+
+	usersLen := len(users)
+	userIndex := rand.Intn(usersLen)
+	username := users[userIndex].Username
+
+	msg := ""
+
+	if at {
+		msg = "@" + username
+	} else {
+		msg = username
+	}
+```
+
+Y añadimos el nuevo campo al módelo de la configuración en `server/configuration.go`.
+
+```go
+type configuration struct {
+	At bool
+}
+```
+
+Cuando subais el plugin vereis algo así.
+
+![settings](https://raw.githubusercontent.com/juanfran/posts/master/others/mattermost-plugin/assets/invite-link.jpg)
+
+
 Ya tenemos el plugin listo, ahora si hacemos `make` y repetimos los pasos podremos ver el plugin en acción como hemos visto en el gif al inicio del tutorial.
 
 Este es el código completo en `plugin.go`
@@ -266,11 +317,22 @@ func (p *Plugin) filterBots(users []*model.User) []*model.User {
 func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
 	users, _ := p.API.GetUsersInChannel(args.ChannelId, "username", 0, 1000)
 
-	users = p.filterBots(users)
+  users = p.filterBots(users)
+  
+  config := p.getConfiguration()
+	at := config.At
 
 	usersLen := len(users)
-	userIndex := rand.Intn(usersLen)
-	msg := "@" + users[userIndex].Username
+  userIndex := rand.Intn(usersLen)
+  username := users[userIndex].Username
+
+  msg := ""
+
+  if at {
+    msg = "@" + username
+  } else {
+    msg = username
+  }
 
 	post := &model.Post{
 		UserId:    p.botUserID,
