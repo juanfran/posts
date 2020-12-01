@@ -1,4 +1,4 @@
-# Refactorizar código Typescript
+# Automatizar el refactorizar de código Typescript
 
 Muchas veces en los proyectos nos entontramos con que queremos cambiar algo de nuestro código y en ocasines se puede convertir en una tarea tediosa y repetitiva. Muchos de estos refactors pueder ser automatizados y es lo que vamos a ver en este artículos con algunos ejemplos.
 
@@ -65,7 +65,7 @@ interface Test1 {
 }
 ```
 
-Para resolver el primer ejemplo configuramos el proyecto como hemos visto y con `getSourceFiles` recorremos todos los ficheros.
+Creamos el fichero `example1.ts`. Configuramos el proyecto como hemos visto y con `getSourceFiles` recorremos todos los ficheros.
 
 ```ts
 import { Project } from 'ts-morph';
@@ -108,6 +108,8 @@ interfaces.forEach((interfaceDeclaration) => {
 });
 ```
 
+Para inicial el refactor ejecutamos el comando `npx ts-node example1.ts`.
+
 Código completo:
 
 ```ts
@@ -137,4 +139,44 @@ project.getSourceFiles().forEach((sourceFile) => {
 });
 ```
 
-## Ejemplo 2, edición de una interfaz
+## Ejemplo 2, TODO
+```ts
+class Test extends ParentTest {
+    name: string;
+
+    constructor() {
+        super();
+
+        const name = 'Test';
+    }
+}
+```
+
+```ts
+class Test extends ParentTest {
+    name: string;
+
+    constructor() {
+        super();
+
+        const name = 'my new test';
+        console.log(this.name);
+    }
+}
+```
+
+sourceFile.insertStatements(3, "console.log(5);\nconsole.log(6);");
+https://ts-morph.com/manipulation/transforms
+
+## Ejemplo 3, TODO
+
+Mover ficheros
+# https://ts-morph.com/navigation/directories
+
+2 clases en un mismo fichero, seprar una a otro fichero
+
+## Ejemplo 4, TODO
+
+referencias
+
+https://ts-morph.com/navigation/finding-references
