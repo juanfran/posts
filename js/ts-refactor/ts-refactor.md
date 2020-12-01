@@ -16,37 +16,7 @@ Instalamos [ts-node](https://www.npmjs.com/package/ts-node) que nos permite ejec
 npm i --save typescript
 ```
 
-Vamos ahora a preparar nuestro script, en este primer ejemplo vamos a poner a tener un `.ts` en el que algunos nombres de variables tienen la primera letra mayúscula y las queremos poner en minúscula.
-
-Por ejemplo:
-
-```ts
-const HelloWorld = 'Hello world';
-
-const HelloObj = {};
-
-function main() {
-    const Hi = 'Hi!';
-
-    console.log(Hi);
-}
-```
-
-Queremos que nuestro script tranforme el contenido del fichero a esto:
-
-```ts
-const helloWorld = 'Hello world';
-
-const helloObj = {};
-
-function main() {
-    const hi = 'Hi!';
-
-    console.log(hi);
-}
-```
-
-Empezamos a configurar nuestro script de refactor.
+Ya estamo listos para empezar a configurar nuestro script de refactor.
 
 ```ts
 import { Project } from "ts-morph";
@@ -73,4 +43,98 @@ EL siguiene paso es indicar en que ficheros queremos ejecutar el script si no es
  project.addSourceFilesAtPaths('src/**/*.ts');
  ```
 
- En el ejemplo vamos a crear un directorio `src` crearemos un fichero donde meteremos el código de ejemplo que hemos visto anteriormente y queremos refactorizar.
+## Ejemplo 1, edición de una interfaz
+
+En este primer ejemplo queremos quitar de nuestra interfaces la propiedad `_id` para añadir `id`.
+
+Ejemplo de fichero que queremos refactorizar:
+
+```ts
+interface Test1 {
+    _id: string;
+    name: string;
+}
+```
+
+Queremos que nuestro script tranforme el contenido del fichero a esto:
+
+```ts
+interface Test1 {
+    id: string;
+    name: string;
+}
+```
+
+Para resolver el primer ejemplo configuramos el proyecto como hemos visto y con `getSourceFiles` recorremos todos los ficheros.
+
+```ts
+import { Project } from 'ts-morph';
+
+const project = new Project();
+
+project.addSourceFilesAtPaths('src/**/*.ts');
+
+project.getSourceFiles().forEach((sourceFile) => {
+
+});
+```
+
+Ahora por cada fichero buscamos todas las interfaces con `getInterfaces` y las recorremos.
+
+```ts
+project.getSourceFiles().forEach((sourceFile) => {
+  const interfaces = sourceFile.getInterfaces();
+
+  interfaces.forEach((interfaceDeclaration) => {
+
+  });
+});
+```
+
+Empezamos con las modificaciones a la interfaz. Buscamos si tiene la pripidad `_id` con `getProperty` y si la tuviese la borramos. También insertamos una nueva propiedad en la posición, con el nombre `id` y el tipo string.
+
+```ts
+interfaces.forEach((interfaceDeclaration) => {
+    const oldId = interfaceDeclaration.getProperty('_id');
+
+    if (oldId) {
+        oldId.remove();
+    }
+
+    interfaceDeclaration.insertProperty(0, {
+        name: 'id',
+        type: 'string',
+    })
+});
+```
+
+Código completo:
+
+```ts
+import { Project } from 'ts-morph';
+
+const project = new Project();
+
+project.addSourceFilesAtPaths('src/**/*.ts');
+
+project.getSourceFiles().forEach((sourceFile) => {
+  const interfaces = sourceFile.getInterfaces();
+
+  interfaces.forEach((interfaceDeclaration) => {
+    const oldId = interfaceDeclaration.getProperty('_id');
+
+    if (oldId) {
+      oldId.remove();
+    }
+
+    interfaceDeclaration.insertProperty(0, {
+      name: 'id',
+      type: 'string',
+    })
+  });
+
+  sourceFile.save();
+});
+```
+
+## Ejemplo 2, edición de una interfaz
