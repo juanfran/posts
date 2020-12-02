@@ -1,25 +1,23 @@
 import { Project } from 'ts-morph';
-import * as ts from 'typescript';
 
 const project = new Project();
 
-project.addSourceFilesAtPaths('src/example1.ts');
+project.addSourceFilesAtPaths('src/example3.ts');
 
 project.getSourceFiles().forEach((sourceFile) => {
-  const interfaces = sourceFile.getInterfaces();
+  const classes = sourceFile.getClasses();
 
-  interfaces.forEach((interfaceDeclaration) => {
-    const oldId = interfaceDeclaration.getProperty('_id');
+  if (classes.length > 1)  {
+    const directory = sourceFile.getDirectory();
+    const classesToMove = classes.slice(1);
 
-    if (oldId) {
-      oldId.remove();
-    }
+    classesToMove.forEach((itClass) => {
+      directory.createSourceFile(`${itClass.getName()}.ts`, itClass.getText());
+      itClass.remove();
+    });
 
-    interfaceDeclaration.insertProperty(0, {
-      name: 'id',
-      type: 'string',
-    })
-  });
+    directory.save();
+  }
 
   sourceFile.save();
 });

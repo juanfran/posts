@@ -165,9 +165,6 @@ class Test extends ParentTest {
 }
 ```
 
-sourceFile.insertStatements(3, "console.log(5);\nconsole.log(6);");
-https://ts-morph.com/manipulation/transforms
-
 ## Ejemplo 3, TODO
 
 Mover ficheros

@@ -1,5 +1,4 @@
 import { Node, Project } from 'ts-morph';
-import { SyntaxKind } from 'typescript';
 
 const project = new Project();
 
