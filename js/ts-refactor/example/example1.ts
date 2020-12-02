@@ -12,12 +12,13 @@ project.getSourceFiles().forEach((sourceFile) => {
 
     if (oldId) {
       oldId.remove();
+
+      interfaceDeclaration.insertProperty(0, {
+        name: 'id',
+        type: 'string',
+      });
     }
 
-    interfaceDeclaration.insertProperty(0, {
-      name: 'id',
-      type: 'string',
-    })
   });
 
   sourceFile.save();

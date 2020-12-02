@@ -1,4 +1,4 @@
-import { Hello } from './example4';
+import { Test } from './example4';
 
-const theTest = new Hello();
+const theTest = new Test();
 theTest.init();
