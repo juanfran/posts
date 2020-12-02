@@ -1,32 +1,24 @@
-# Automatizar el refactorizar de código Typescript
+# Automatizar refactoización de código Typescript
 
-Muchas veces en los proyectos nos entontramos con que queremos cambiar algo de nuestro código y en ocasines se puede convertir en una tarea tediosa y repetitiva. Muchos de estos refactors pueder ser automatizados y es lo que vamos a ver en este artículos con algunos ejemplos.
+Muchas veces en los proyectos nos encontramos con que queremos refactorizar código y vemos que por la cantidad de cambios que hay que hacer se convierte en una tarea tediosa, repetitiva que incluso podemos descartar por el tiempo que tenemos que emplear. Muchos de estos refactors pueder ser automatizados y es lo que vamos a ver en este artículo con 4 ejemplos con diferentes escenarios.
 
-Para facilitar las cosas recomiendo usar [ts-morph](https://github.com/dsherret/ts-morph/) que nos proporciona un API que nos permite navegar y modificar nuestro código Typescript.
+Para facilitar las cosas recomiendo usar [ts-morph](https://github.com/dsherret/ts-morph/) que nos proporciona un API más sencilla para navegar y modificar código Typescript.
 
-Empezamos preparando el proyecto para los ejemplos. En la carpeta donde decidamos trabajar instalamos `ts-morph`.
+Para empezar los ejemplos creamos una carpeta con su `package.json` e instalamos `ts-morph`.
 
 ```bash
 npm install --save-dev ts-morph
 ```
 
-Instalamos [ts-node](https://www.npmjs.com/package/ts-node) que nos permite ejecutar Typescript con node.
+También instalamos [ts-node](https://www.npmjs.com/package/ts-node) que nos permite ejecutar Typescript con node.
 
 ```bash
 npm i --save typescript
 ```
 
-Ya estamo listos para empezar a configurar nuestro script de refactor.
+Ya estamos listos para empezar a configurar nuestro script de refactor.
 
-```ts
-import { Project } from "ts-morph";
-
-const project = new Project({
-     tsConfigFilePath: "path/to/tsconfig.json",
-});
-```
-
-Si tenemos un `tsconfig.json` que queremos usar podemos indicarlo como en el ejemplo. Por defecto `ts-morph` usará los mimos ficheros que hayamso indicado en el `tsconfig.json` podemos evitarlo añadiendo `skipAddingFilesFromTsConfig`.
+Si tenemos un `tsconfig.json` que queremos usar podemos indicarlo como en el ejemplo. Por defecto `ts-morph` usará los mismos ficheros que hayamos indicado en el `tsconfig.json` podemos evitarlo añadiendo `skipAddingFilesFromTsConfig`.
 
 ```ts
 import { Project } from "ts-morph";
@@ -37,7 +29,7 @@ const project = new Project({
 });
 ```
 
-EL siguiene paso es indicar en que ficheros queremos ejecutar el script si no estamos usando los del `tsconfig.json`.
+El siguiene paso es indicar en que ficheros queremos ejecutar el script si no estamos usando los del `tsconfig.json`.
 
 ```ts
  project.addSourceFilesAtPaths('src/**/*.ts');
@@ -56,7 +48,7 @@ interface Test1 {
 }
 ```
 
-Queremos que nuestro script tranforme el contenido del fichero a esto:
+El resultado del script tiene tranformar el contenido del fichero a esto:
 
 ```ts
 interface Test1 {
@@ -79,7 +71,7 @@ project.getSourceFiles().forEach((sourceFile) => {
 });
 ```
 
-Ahora por cada fichero buscamos todas las interfaces con `getInterfaces` y las recorremos.
+Ahora por cada fichero buscamos las interfaces que contiene con `getInterfaces` y las recorremos.
 
 ```ts
 project.getSourceFiles().forEach((sourceFile) => {
@@ -91,7 +83,7 @@ project.getSourceFiles().forEach((sourceFile) => {
 });
 ```
 
-Empezamos con las modificaciones a la interfaz.  Vamos a buscar las interfaces que necesitamos, borrar `_id` y añadir `id`.
+Empezamos con las modificaciones a la interfaz. Buscamos las interfaces que necesitamos, borraramos `_id` y añadimos `id`.
 
 ```ts
 interfaces.forEach((interfaceDeclaration) => {
@@ -114,13 +106,13 @@ interfaces.forEach((interfaceDeclaration) => {
 sourceFile.save();
 ```
 
-Para inicial el refactor ejecutamos el comando `npx ts-node example1.ts`.
+Para inicial el refactor ejecutamos el comando `npx ts-node example1.ts`. Si todo ha ido bien veremos que el fichero ha sido modifado con los cambios indicados.
 
 [Código completo](https://github.com/juanfran/posts/blob/master/js/ts-refactor/example/example1.ts)
 
 ## Ejemplo 2, buscar y manipular una variable
 
-Este ejemplo vamos a buscar la variable `name` que está dentro del constructor de las clases que heredan de `ParentTest` queremos modificar su contenido y poner un `console.log` a continuación como vemos en el ejemplo:
+Este ejemplo vamos a modificar el contenido de la variable `name` y añadir un `console.log` pero solo vamos a hacerlos para las variables que estan dentro de un constructor en una clase que herede de `ParentTest`. Lo vemos con un ejemplo:
 
 ```ts
 class Test extends ParentTest {
@@ -133,6 +125,8 @@ class Test extends ParentTest {
     }
 }
 ```
+
+Depues del script:
 
 ```ts
 class Test extends ParentTest {
@@ -157,9 +151,9 @@ const classConstructor = sourceFile.forEachDescendant((node, traversal) => {
     // Comprobamos si el nodo es una clase con la ayuda de este método de `ts-morph`
     if (Node.isClassDeclaration(node)) {
         const classExtends = node.getExtends();
-        // Accedemos a las clases de las que extiende nuestra clase y comprobamos si alguna de ellas es `ParentTest`
+        // Accedemos a la clase de la que extiende y comprobamos si es `ParentTest`
         if (!classExtends || classExtends.getText() !== 'ParentTest') {
-            // Si no se trata de la clase que estamos buscando hacemos un `skip` de esta rama del arbol porque ya sabemos que son custructor no nos interesa
+            // Si no se trata de la clase que estamos buscando hacemos un `skip` de esta rama del arbol porque ya sabemos que su constructor no nos interesa
             traversal.skip();
         }
     // Si es un constructor devolvemos el nodo porque gracias al skip anterior sabemos que está dentro de una clase que tiene lo que buscamos
@@ -207,13 +201,13 @@ project.getSourceFiles().forEach((sourceFile) => {
     const directory = sourceFile.getDirectory();
     const classesToMove = classes.slice(1);
 
-    // Vamos clase por clase creando un fichero con el nombre de clase y el cotenido de la misma, al terminar borramos la clase del fichero original
+    // Vamos clase por clase creando un fichero con el nombre y el cotenido de la misma, al terminar borramos la clase del fichero original
     classesToMove.forEach((itClass) => {
       directory.createSourceFile(`${itClass.getName()}.ts`, itClass.getText());
       itClass.remove();
     });
 
-    // aplicamos los cambios en el directorio, es decir se crean todos los ficheros que hayamos indicados
+    // Aplicamos los cambios en el directorio, es decir se crean todos los ficheros que hayamos indicados
     directory.save();
   }
 
@@ -271,7 +265,7 @@ const classes = sourceFile.getClasses();
 classes.forEach((itClass) => {
   // Comprobamos si es la clase que queremos renombrar
   if (itClass.getName() === 'Test') {
-    // Buscamos las referencias, en este caso nos devulve un array de `ReferencedSymbol` por cada fichero donde se esté usando `Test`
+    // Buscamos las referencias, en este caso nos devulve un array que contiene un`ReferencedSymbol` por cada fichero donde se esté usando `Test`
     const referencedSymbols = itClass.findReferences();
 
     referencedSymbols.forEach((referenceSymbol) => {
@@ -291,7 +285,7 @@ classes.forEach((itClass) => {
 
 ### Conclusiones
 
-Con `ts-morph` podeis ver que ya no importa la cantidad de cambios que tengamos que hacer en un refactor, gracias a poder automatizarlo podemos ahorrarnos horas/días de trabajo repetitivo, creo que dominarlo merece mucho la pena porque el coste de mantener nuestro código al día se reduce muchisimo.
+Con `ts-morph` podeis ver que ya no importa la cantidad de cambios que tengamos que hacer en un refactor, gracias a poder automatizarlo podemos ahorrarnos horas/días de trabajo repetitivo por lo que creo que dominarlo merece mucho la pena.
 
 También, aun que no los hemos visto en los ejemplo podemos analizar el código para crear nuestro propios linters.
 
