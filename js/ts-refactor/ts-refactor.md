@@ -167,10 +167,15 @@ class Test extends ParentTest {
 
 ## Ejemplo 3, TODO
 
-Mover ficheros
-# https://ts-morph.com/navigation/directories
+```ts
+class Test1 {
 
-2 clases en un mismo fichero, seprar una a otro fichero
+}
+
+class Test2 {
+
+}
+```
 
 ## Ejemplo 4, TODO
 

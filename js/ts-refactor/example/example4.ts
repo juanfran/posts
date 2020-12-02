@@ -1,25 +1,24 @@
-import { Project } from 'ts-morph';
+import { Project, Node } from 'ts-morph';
 import * as ts from 'typescript';
 
 const project = new Project();
 
-project.addSourceFilesAtPaths('src/example1.ts');
+project.addSourceFilesAtPaths('src/example4*.ts');
 
 project.getSourceFiles().forEach((sourceFile) => {
-  const interfaces = sourceFile.getInterfaces();
+  const classes = sourceFile.getClasses();
 
-  interfaces.forEach((interfaceDeclaration) => {
-    const oldId = interfaceDeclaration.getProperty('_id');
+  classes.forEach((itClass) => {
+    if (itClass.getName() === 'Test') {
+      const referencedSymbols = itClass.findReferences();
 
-    if (oldId) {
-      oldId.remove();
+      referencedSymbols.forEach((referenceSymbol) => {
+        referenceSymbol.getReferences()
+        .forEach((reference) => {
+          reference.getNode().replaceWithText('Hello');
+          reference.getSourceFile().save();
+        });
+      });
     }
-
-    interfaceDeclaration.insertProperty(0, {
-      name: 'id',
-      type: 'string',
-    })
   });
-
-  sourceFile.save();
 });
