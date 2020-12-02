@@ -289,5 +289,10 @@ classes.forEach((itClass) => {
 
 [Código completo](https://github.com/juanfran/posts/blob/master/js/ts-refactor/example/example4.ts)
 
-
 ### Conclusiones
+
+Con `ts-morph` podeis ver que ya no importa la cantidad de cambios que tengamos que hacer en un refactor, gracias a poder automatizarlo podemos ahorrarnos horas/días de trabajo repetitivo, creo que dominarlo merece mucho la pena porque el coste de mantener nuestro código al día se reduce muchisimo.
+
+También, aun que no los hemos visto en los ejemplo podemos analizar el código para crear nuestro propios linters.
+
+Podeis encontar muchas más últilidades en la [documentación oficial](https://ts-morph.com/).
