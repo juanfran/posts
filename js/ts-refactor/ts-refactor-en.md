@@ -1,23 +1,23 @@
 # Refactoring Typescript code with ts-morph
 
-Many times we find out in our projects that we want to refactor our code and we see that the amount of changes that would have to be made will make the task became very tedious and repetitive than we could event discard it because the amount of time we need to expend on it. Many of these refactors can be programmed and this is what we are going to see in this article with 4 examples.
+Often we find in our projects that we want to refactor our code and we see that the amount of changes required by the task are tedious and repetitive, so much so that discontinuing this process would be advantageous. Many of these refactors can be programmed and this is what we are going to see in this article with 4 examples.
 
-To make things easier we are going to use [ts-morph](https://github.com/dsherret/ts-morph/) that it will provide us an API to navigate and modify Typescript code.
+To make things easier we are going to use [ts-morph](https://github.com/dsherret/ts-morph/) which will provide us an API to navigate and modify our Typescript code.
 
-To get started we are going to make a folder with a `package.json` file, then we install `ts-morph`.
+To get started we are going to make a folder with a `package.json` file and then we install `ts-morph`.
 
 ```bash
 npm install --save-dev ts-morph
 ```
 
-Also we need to install [ts-node](https://www.npmjs.com/package/ts-node) which allow us to run Typescript with node.
+Also we need to install [ts-node](https://www.npmjs.com/package/ts-node) which will allow us to run Typescript with node.
 
 ```bash
 npm i --save ts-node
 ```
-We are ready to start configuring our refactor script.
+We are now ready to start configuring our refactor script.
 
-We can add the path to our `tsconfig.json` with `tsConfigFilePath` but `ts-morph` will use the files in our `tsconfig.json` to avoid it we can use `skipAddingFilesFromTsConfig`.
+We can add the path to our `tsconfig.json` with `tsConfigFilePath` but `ts-morph` will use the files in our `tsconfig.json`. A way around this is to use `skipAddingFilesFromTsConfig`.
 
 ```ts
 import { Project } from 'ts-morph';
@@ -28,16 +28,15 @@ const project = new Project({
 });
 ```
 
-Next, we will indicate in which files we want to run the script. We can avoid this step if we want to use the ones in the `tsconfig.json`.
+Next, we will indicate in which files we want to run the script. We can bypass this step if we want to use the ones in the `tsconfig.json`.
 
 ```ts
  project.addSourceFilesAtPaths('src/**/*.ts');
- ```
+```
 
-## Example 1: change an interface
 ## Example 1: edit an interface
 
-In this first example we want to remove the `_id` property from our interface to add` id`.
+In this first example we want to remove the `_id` property from our interface and add `id`.
 
 This is the file that we want to refactor.
 
@@ -57,15 +56,15 @@ interface Test1 {
 }
 ```
 
-Before starting it's recommended to us [ts-ast-viewer](https://ts-ast-viewer.com/) that shows us the code AST that could help much when using `ts-morph` to understand the structure of the code to refactor.
+Before starting it's recommended to us [ts-ast-viewer](https://ts-ast-viewer.com/) which shows us the code AST that may help when we're using `ts-morph` to understand the structure of the code we're refactoring.
 
 This is the AST code from the previous interface:
 
 ![build](https://raw.githubusercontent.com/juanfran/posts/master/js/ts-refactor/assets/ts-ast-viewer.jpg)
 
-We're going to start with the code that will refactor `Test1` interface.
+We're going to start with the code that will refactor the `Test1` interface.
 
-We create the file `example1.ts`. Next we configure the project as we have seen and with `getSourceFiles` we go through all the files.
+We create the file `example1.ts`. Next, we configure the project as we have seen and with `getSourceFiles` we go through every file.
 
 ```ts
 import { Project } from 'ts-morph';
@@ -110,17 +109,17 @@ interfaces.forEach((interfaceDeclaration) => {
     }
 });
 
-// Guardamos los cambios realizados al fichero
+// We save the file with the changes
 sourceFile.save();
 ```
 
-To start the refactor we run the command `npx ts-node example1.ts`. If everything has gone well we will see that the file has been modified as we wanted.
+To start the refactor we run the command `npx ts-node example1.ts`. If everything has gone well we will see that the file has been modified as expected.
 
 [code](https://github.com/juanfran/posts/blob/master/js/ts-refactor/example/example1.ts)
 
-## Example 2: find and replace variable
+## Example 2: find and replace a variable
 
-The goal in this example is to modify the content of the `name` variable and add a` console.log`, but we are only going to do it for variables that are inside a constructor in a class that inherits from `ParentTest`.
+The goal in this example is to modify the content of the `name` variable and add a `console.log`, but we are only going to do it for variables that are inside a constructor in a class inherited from `ParentTest`.
 
 ```ts
 class Test extends ParentTest {
@@ -149,9 +148,8 @@ class Test extends ParentTest {
 }
 ```
 
-The goal in this example is to modify the content of the `name` variable and add a` console.log`, but we are only going to do it for variables that are inside a constructor in a class that inherits from `ParentTest`.
+The first thing we are going to do is look for the constructors that meet this criteria, those that are inside a class inherited from `ParentTest`. To do this, we will use the following code:
 
-The first thing we are going to do is look for the constructors that meet this criteria, those that are inside a class that inherits from `ParentTest`. To do this, we will use the next code:
 ```ts
 import { Node } from 'ts-morph';
 
@@ -160,12 +158,12 @@ const classConstructor = sourceFile.forEachDescendant((node, traversal) => {
     // We check if the node is a class with this `ts-morph` method
     if (Node.isClassDeclaration(node)) {
         const classExtends = node.getExtends();
-        // We ask from the class extend and check if it is `ParentTest`
+        // We verify if the class was inherited from `ParentTest`
         if (!classExtends || classExtends.getText() !== 'ParentTest') {
             // If it is not the class we are looking for, we can `skip` this tree branch and continue the search.
             traversal.skip();
         }
-    // If it is a constructor we finish the search because thanks to the previous skip we know that this node is inside a class that inherits from ParentTest
+    // If it is a constructor we stop searching because thanks to the previous skip we now know that this node is inside a class inherited from ParentTest
     } else if (Node.isConstructorDeclaration(node)) {
         return node;
     }
@@ -174,7 +172,7 @@ const classConstructor = sourceFile.forEachDescendant((node, traversal) => {
 });
 ```
 
-If we have found the constructor that we are going to look for and if the `name` variable exists, we will replace its content and add the` console.log`.
+If we have found the constructor that we were looking for and if the `name` variable exists, we will replace its content and add the `console.log`.
 
 ```ts
 if (classConstructor) {
@@ -185,7 +183,7 @@ if (classConstructor) {
             // Replace the variable assigment
             variable.replaceWithText(`name = 'my new test'`);
 
-            // Access the position of the variable relative to the constructor and insert the console.log after it
+            // Access the position of the variable relative to the constructor and insert console.log after it
             const index = variable.getVariableStatement().getChildIndex();
             classConstructor.insertStatements(index + 1, 'console.log(name);');
         }
@@ -195,9 +193,9 @@ if (classConstructor) {
 
 [Code](https://github.com/juanfran/posts/blob/master/js/ts-refactor/example/example2.ts)
 
-## Example 3: only allow one class per file
+## Example 3: only allowing one class per file
 
-In the example, we will search a file to see if it has more than one class and if so we will take the leftovers and move them to different files.
+In the next example, we will search a file to see if it has more than one class and if so we will take any extra classes and move them to different files.
 
 ```ts
 project.getSourceFiles().forEach((sourceFile) => {
@@ -206,30 +204,30 @@ project.getSourceFiles().forEach((sourceFile) => {
 
   // If there is more than one we begin the changes
   if (classes.length > 1)  {
-    // We get the file directory obecause we are going to use it to create the new files
+    // We get the file directory because we are going to use it to create the new files
     const directory = sourceFile.getDirectory();
     const classesToMove = classes.slice(1);
 
-    // We go class by class creating a file with the name and its content, when we finish we delete the class from the original file
+    // We go class by class creating a file with the name and its content. When finished we delete the class from the original file
     classesToMove.forEach((itClass) => {
       directory.createSourceFile(`${itClass.getName()}.ts`, itClass.getText());
       itClass.remove();
     });
 
-    // We apply the changes in the folder
+    // We apply the changes to the folder
     directory.save();
   }
 
-  // We save the changes in the original file so that the moved classes disappear
+  // We save the changes in the original file so that the removed classes disappear
   sourceFile.save();
 });
 ```
 
-[Código completo](https://github.com/juanfran/posts/blob/master/js/ts-refactor/example/example3.ts)
+[Code](https://github.com/juanfran/posts/blob/master/js/ts-refactor/example/example3.ts)
 
 ## Example 4: rename a class and all its references
 
-For this example we have two files, the one of the class `Test` that we want to rename:
+For this example we have two files, one with the class `Test` that we want to rename:
 
 ```ts
 export class Test {
@@ -239,7 +237,7 @@ export class Test {
 }
 ```
 
-And where it is used:
+And the one where it's kept:
 
 ```ts
 import { Test } from './example4';
@@ -248,7 +246,7 @@ const theTest = new Test();
 theTest.init();
 ```
 
-What we want to do is rename the class `Test` to` Hello` and rename every import. The result should be this:
+What we want to do is rename the class `Test` to `Hello` and rename every import. The result should be this:
 
 ```ts
 export class Hello {
@@ -292,9 +290,9 @@ classes.forEach((itClass) => {
 
 [Complete code](https://github.com/juanfran/posts/blob/master/js/ts-refactor/example/example4.ts)
 
-### Conclusiones
+### Conclusions
 
-With `ts-morph` you can see that it no longer matters how many changes we have to do in a refactor, thanks to being able to program those changes we will save hours / days of repetitive work. Mastering it is definitely worth it.
+With `ts-morph` you can see that it no longer matters how many changes we have to do in a refactor. Thanks to being able to program those changes we will save hours / days of repetitive work. Mastering it is definitely worth it.
 
 Also, although we have not seen it in the examples, we can analyze the code to create our own linters.
 
